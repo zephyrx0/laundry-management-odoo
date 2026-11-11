@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    ============================================================================
+     Kalvyai | Laundry Management - Base
+     Copyright (c) 2026-Present Kalvyai (https://kalvyai.com)
+     License: OPL-1. See the LICENSE file.
+    ============================================================================
+-->
+<odoo>
+    <record id="paperformat_laundry_receipt" model="report.paperformat">
+        <field name="name">Laundry Receipt (80 mm)</field>
+        <field name="format">custom</field>
+        <field name="page_width">80</field>
+        <field name="page_height">250</field>
+        <field name="orientation">Portrait</field>
+        <field name="margin_top">3</field>
+        <field name="margin_bottom">3</field>
+        <field name="margin_left">3</field>
+        <field name="margin_right">3</field>
+        <field name="header_line" eval="False"/>
+        <field name="header_spacing">0</field>
+        <field name="disable_shrinking" eval="True"/>
+        <field name="dpi">96</field>
+    </record>
+
+    <record id="paperformat_laundry_tag" model="report.paperformat">
+        <field name="name">Laundry Garment Tag (50 x 30 mm)</field>
+        <field name="format">custom</field>
+        <field name="page_width">50</field>
+        <field name="page_height">30</field>
+        <field name="orientation">Portrait</field>
+        <field name="margin_top">1</field>
+        <field name="margin_bottom">1</field>
+        <field name="margin_left">1</field>
+        <field name="margin_right">1</field>
+        <field name="header_line" eval="False"/>
+        <field name="header_spacing">0</field>
+        <field name="disable_shrinking" eval="True"/>
+        <field name="dpi">96</field>
+    </record>
+</odoo>

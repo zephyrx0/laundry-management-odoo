@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    ============================================================================
+     Kalvyai | Laundry Management - Base
+     Copyright (c) 2026-Present Kalvyai (https://kalvyai.com)
+     License: OPL-1. See the LICENSE file.
+    ============================================================================
+-->
+<odoo>
+    <record id="view_laundry_deliver_wizard_form" model="ir.ui.view">
+        <field name="name">ki.laundry.deliver.wizard.form</field>
+        <field name="model">ki.laundry.deliver.wizard</field>
+        <field name="arch" type="xml">
+            <form>
+                <field name="order_id" invisible="1"/>
+                <field name="currency_id" invisible="1"/>
+                <field name="require_scan" invisible="1"/>
+                <div class="alert alert-info" role="alert" invisible="pending_item_count == 0">
+                    <field name="pending_item_count" class="oe_inline"/> item(s) of this order are still in process (partial delivery).
+                </div>
+                <div class="alert alert-warning" role="alert" invisible="amount_due &lt;= 0">
+                    Amount still due: <field name="amount_due" class="oe_inline"/>
+                </div>
+                <group>
+                    <field name="item_ids" widget="many2many_tags" options="{'no_create': True}"/>
+                    <field name="scanned_barcodes" invisible="not require_scan" required="require_scan"/>
+                    <field name="confirm_unpaid" invisible="amount_due &lt;= 0"/>
+                </group>
+                <footer>
+                    <button name="action_deliver" type="object" string="Deliver" class="btn-primary"/>
+                    <button string="Discard" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+</odoo>

@@ -1,0 +1,89 @@
+// ============================================================================
+//  Web Responsive Enterprise — responsive refinements & accessibility
+// ----------------------------------------------------------------------------
+//  Odoo's web client is already responsive (mobile burger menu, slide-in app
+//  sidebar, responsive list/kanban). This file *refines* that experience for
+//  touch and small screens, and adds accessibility guarantees. Breakpoints
+//  mirror Bootstrap 5 / Odoo: md < 768px, sm < 576px.
+// ============================================================================
+
+// --- Accessibility: visible focus ring on keyboard navigation --------------
+.o_web_client {
+    :focus-visible {
+        outline: 2px solid var(--wre-accent);
+        outline-offset: 2px;
+        border-radius: 3px;
+    }
+    // Don't show the ring for mouse clicks (only keyboard).
+    :focus:not(:focus-visible) {
+        outline: none;
+    }
+}
+
+// --- Accessibility: honour the user's reduced-motion preference -------------
+@media (prefers-reduced-motion: reduce) {
+    .o_web_client * {
+        animation-duration: .001ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: .001ms !important;
+        scroll-behavior: auto !important;
+    }
+}
+
+// --- Tablet (< 992px): roomier touch targets -------------------------------
+@media (max-width: 991.98px) {
+    .o_web_client {
+        .o_control_panel .btn,
+        .o_cp_buttons .btn {
+            min-height: 38px;
+        }
+    }
+}
+
+// --- Mobile (< 768px) ------------------------------------------------------
+@media (max-width: 767.98px) {
+    .o_web_client {
+        // Never allow the action area to scroll sideways.
+        .o_action_manager,
+        .o_content {
+            overflow-x: hidden;
+        }
+
+        // Comfortable tap targets (Apple/Material ~44px guidance).
+        .btn,
+        .o_data_row,
+        .dropdown-item {
+            min-height: 40px;
+        }
+
+        // Form sheet goes edge-to-edge on phones (no wasted gutter).
+        .o_form_view .o_form_sheet {
+            border-radius: 0;
+            border-left: 0;
+            border-right: 0;
+            padding-inline: 12px;
+        }
+
+        // Kanban cards: full-width, single column friendly.
+        .o_kanban_renderer:not(.o_kanban_grouped) .o_kanban_record {
+            width: 100%;
+        }
+
+        // Sticky control panel can get tall on mobile; relax it.
+        .o_control_panel {
+            position: static;
+        }
+    }
+}
+
+// --- Very small screens (<= 360px): tighten paddings -----------------------
+@media (max-width: 360px) {
+    .o_web_client {
+        .o_form_view .o_form_sheet {
+            padding-inline: 8px;
+        }
+        .o_control_panel {
+            padding-inline: 8px;
+        }
+    }
+}

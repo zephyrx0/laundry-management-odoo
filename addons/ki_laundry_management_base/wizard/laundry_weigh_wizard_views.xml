@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    ============================================================================
+     Kalvyai | Laundry Management - Base
+     Copyright (c) 2026-Present Kalvyai (https://kalvyai.com)
+     License: OPL-1. See the LICENSE file.
+    ============================================================================
+-->
+<odoo>
+    <record id="view_laundry_weigh_wizard_form" model="ir.ui.view">
+        <field name="name">ki.laundry.weigh.wizard.form</field>
+        <field name="model">ki.laundry.weigh.wizard</field>
+        <field name="arch" type="xml">
+            <form>
+                <field name="intake_id" invisible="1"/>
+                <field name="can_change_bags" invisible="1"/>
+                <group>
+                    <field name="weight_estimated" invisible="not weight_estimated"/>
+                    <field name="weight_actual"/>
+                    <field name="bag_count" readonly="not can_change_bags"/>
+                </group>
+                <footer>
+                    <button name="action_confirm" type="object" string="Save Weight" class="btn-primary"/>
+                    <button string="Discard" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+</odoo>

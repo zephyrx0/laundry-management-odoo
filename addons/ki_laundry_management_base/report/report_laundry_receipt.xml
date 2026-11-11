@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    ============================================================================
+     Kalvyai | Laundry Management - Base
+     Copyright (c) 2026-Present Kalvyai (https://kalvyai.com)
+     License: OPL-1. See the LICENSE file.
+    ============================================================================
+-->
+<odoo>
+    <template id="report_laundry_receipt_document">
+        <t t-set="o" t-value="o.with_context(lang=o.partner_id.lang or o.env.lang)"/>
+        <div class="page o_ki_laundry_receipt" style="font-size: 11px; font-family: monospace;">
+            <div class="text-center">
+                <img t-if="o.company_id.logo" t-att-src="image_data_uri(o.company_id.logo)" style="max-height: 40px;" alt="Logo"/>
+                <div><strong t-field="o.company_id.name"/></div>
+                <div t-if="o.company_id.phone" t-field="o.company_id.phone"/>
+                <div t-if="o.company_id.vat">Tax ID: <span t-field="o.company_id.vat"/></div>
+            </div>
+            <hr/>
+            <div class="text-center"><strong style="font-size: 14px;" t-field="o.name"/></div>
+            <div class="text-center" t-if="o.barcode">
+                <div t-field="o.barcode" t-options="{'widget': 'barcode', 'symbology': 'Code128', 'width': 600, 'height': 120, 'img_style': 'width: 100%; height: 40px;'}"/>
+                <div t-field="o.barcode"/>
+            </div>
+            <div>Customer: <span t-field="o.partner_id.name"/></div>
+            <div t-if="o.partner_id.phone">Phone: <span t-field="o.partner_id.phone"/></div>
+            <div>Date: <span t-field="o.date_order" t-options="{'widget': 'datetime'}"/></div>
+            <div t-if="o.date_due"><strong>Ready by: <span t-field="o.date_due" t-options="{'widget': 'datetime'}"/></strong></div>
+            <div t-if="o.is_urgent"><strong>*** URGENT ***</strong></div>
+            <hr/>
+            <t t-if="o.company_id.ki_laundry_receipt_layout == 'detailed'">
+                <table class="table table-sm table-borderless" style="font-size: 11px;">
+                    <tr t-foreach="o.line_ids.filtered(lambda l: l.line_type != 'advance')" t-as="line">
+                        <td><span t-field="line.name"/><br/>
+                            <span t-out="line.product_uom_qty"/> x <span t-field="line.price_unit" t-options="{'widget': 'monetary', 'display_currency': o.currency_id}"/>
+                            <t t-if="line.discount"> (-<span t-out="round(line.discount, 2)"/>%)</t>
+                        </td>
+                        <td class="text-end"><span t-field="line.price_total"/></td>
+                    </tr>
+                </table>
+            </t>
+            <t t-else="">
+                <table class="table table-sm table-borderless" style="font-size: 11px;">
+                    <tr t-foreach="o._ki_receipt_groups()" t-as="group">
+                        <td>
+                            <strong t-out="group['label']"/> <t t-if="group['quantity']">x <t t-out="group['quantity']"/></t>
+                            <div t-if="group['services']" t-out="group['services']"/>
+                            <div t-if="group['addons']">+ <t t-out="group['addons']"/></div>
+                        </td>
+                        <td class="text-end"><span t-out="group['amount']" t-options="{'widget': 'monetary', 'display_currency': o.currency_id}"/></td>
+                    </tr>
+                </table>
+            </t>
+            <hr/>
+            <table class="table table-sm table-borderless" style="font-size: 11px;">
+                <tr><td>Untaxed</td><td class="text-end"><span t-field="o.amount_untaxed"/></td></tr>
+                <tr><td>Taxes</td><td class="text-end"><span t-field="o.amount_tax"/></td></tr>
+                <tr><td><strong>Total</strong></td><td class="text-end"><strong t-field="o.amount_total"/></td></tr>
+                <tr t-if="o.amount_paid"><td>Paid</td><td class="text-end"><span t-field="o.amount_paid"/></td></tr>
+                <tr t-if="o.amount_due and o.amount_paid"><td><strong>Due</strong></td><td class="text-end"><strong t-field="o.amount_due"/></td></tr>
+            </table>
+            <div t-if="any(i.pricing_mode == 'kg' and not i.weight_actual for i in o.intake_ids)" class="text-center">
+                <em>Estimated amount: final price after weighing.</em>
+            </div>
+            <div t-if="o.item_count">Tags: <span t-out="o.item_count"/></div>
+            <div t-if="o.note"><em t-field="o.note"/></div>
+            <hr t-if="o.company_id.ki_laundry_terms"/>
+            <div t-if="o.company_id.ki_laundry_terms" t-field="o.company_id.ki_laundry_terms" style="font-size: 9px;"/>
+            <div class="text-center mt-2">Please bring this receipt to collect your garments.</div>
+        </div>
+    </template>
+
+    <template id="report_laundry_receipt">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="o">
+                <t t-call="web.basic_layout">
+                    <t t-call="ki_laundry_management_base.report_laundry_receipt_document"/>
+                </t>
+            </t>
+        </t>
+    </template>
+</odoo>

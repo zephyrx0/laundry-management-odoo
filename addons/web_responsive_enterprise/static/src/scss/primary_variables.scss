@@ -1,0 +1,20 @@
+// ============================================================================
+//  Web Responsive Enterprise — brand variable overrides
+// ----------------------------------------------------------------------------
+//  Loaded BEFORE Odoo's `web/static/src/scss/primary_variables.scss`, so these
+//  plain (non-`!default`) assignments win over the core `!default` values.
+//
+//  Because they are defined first, the downstream defaults cascade for free:
+//    $o-brand-odoo:    $o-community-color !default;  -> our purple
+//    $o-brand-primary: $o-community-color !default;  -> our purple
+//    $o-navbar-background: $o-brand-odoo  !default;  -> purple navbar
+//
+//  We cannot reference $o-brand-primary here (not defined yet), so use literals.
+// ============================================================================
+
+// Odoo 19 Enterprise brand purple (navbar, brand, primary buttons).
+$o-community-color: #714b67;
+
+// Accent used for links, active/focus states and secondary emphasis.
+// Matches the lighter Enterprise purple requested for the theme.
+$o-action: #875a7b;

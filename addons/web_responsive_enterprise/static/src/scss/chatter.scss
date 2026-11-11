@@ -1,0 +1,24 @@
+// ============================================================================
+//  Web Responsive Enterprise — chatter (mail) polish
+// ----------------------------------------------------------------------------
+//  Class names follow the Owl mail module (`o-mail-*`). Purely cosmetic so it
+//  degrades gracefully if a class is renamed in a future point release.
+// ============================================================================
+
+.o_web_client .o-mail-Chatter {
+    .o-mail-Message {
+        border-radius: var(--wre-radius-sm);
+        transition: background-color var(--wre-transition, 160ms ease);
+
+        &:hover {
+            background-color: var(--wre-surface-2);
+        }
+    }
+
+    // Composer reads as a distinct, slightly raised card.
+    .o-mail-Composer {
+        border-radius: var(--wre-radius);
+        border: 1px solid var(--wre-border);
+        background-color: var(--wre-surface);
+    }
+}

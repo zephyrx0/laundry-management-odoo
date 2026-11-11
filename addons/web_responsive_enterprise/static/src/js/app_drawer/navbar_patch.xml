@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<templates xml:space="preserve">
+
+    <!-- Replace the desktop apps dropdown with a button that opens the drawer.
+         `extension` mode patches web.NavBar.AppsMenu in place, so the existing
+         t-call in web.NavBar renders this version. -->
+    <t t-name="web_responsive_enterprise.NavBarAppsMenu"
+       t-inherit="web.NavBar.AppsMenu"
+       t-inherit-mode="extension">
+        <xpath expr="//div[hasclass('o_navbar_apps_menu')]/Dropdown" position="replace">
+            <button class="o_wre_apps_menu_btn btn border-0 h-100"
+                    data-hotkey="h"
+                    title="Home Menu"
+                    aria-label="Home Menu"
+                    aria-haspopup="dialog"
+                    t-on-click="() => this.onAppDrawerToggle()">
+                <i class="oi oi-apps" aria-hidden="true"/>
+            </button>
+        </xpath>
+    </t>
+
+</templates>

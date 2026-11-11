@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    ============================================================================
+     Kalvyai | Laundry Management - Base
+     Copyright (c) 2026-Present Kalvyai (https://kalvyai.com)
+     License: OPL-1. See the LICENSE file.
+    ============================================================================
+-->
+<odoo noupdate="1">
+    <record id="cron_laundry_reminders" model="ir.cron">
+        <field name="name">Laundry: Unclaimed Order Reminders</field>
+        <field name="model_id" ref="model_ki_laundry_order"/>
+        <field name="state">code</field>
+        <field name="code">model._cron_send_reminders()</field>
+        <field name="user_id" ref="base.user_root"/>
+        <field name="interval_number">1</field>
+        <field name="interval_type">days</field>
+    </record>
+    <record id="cron_laundry_storage_fees" model="ir.cron">
+        <field name="name">Laundry: Storage Fees</field>
+        <field name="model_id" ref="model_ki_laundry_order"/>
+        <field name="state">code</field>
+        <field name="code">model._cron_storage_fees()</field>
+        <field name="user_id" ref="base.user_root"/>
+        <field name="interval_number">1</field>
+        <field name="interval_type">days</field>
+    </record>
+    <record id="cron_laundry_expire_offers" model="ir.cron">
+        <field name="name">Laundry: Expire Offers</field>
+        <field name="model_id" ref="model_ki_laundry_offer"/>
+        <field name="state">code</field>
+        <field name="code">model._cron_expire_offers()</field>
+        <field name="user_id" ref="base.user_root"/>
+        <field name="interval_number">1</field>
+        <field name="interval_type">days</field>
+    </record>
+</odoo>

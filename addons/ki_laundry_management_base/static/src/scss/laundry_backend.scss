@@ -1,0 +1,491 @@
+/* ----------------------------------------------------------------------------
+ *  Kalvyai | Laundry Management - Base
+ *  Copyright (c) 2026-Present Kalvyai (https://kalvyai.com)
+ *  License: OPL-1. See the LICENSE file.
+ * ---------------------------------------------------------------------------- */
+// Shared look of the Laundry screens (Dashboard, Workstation, Prices):
+// soft cards on the light app background, one accent colour, big touch targets.
+
+$o-ki-card-radius: 0.75rem;
+$o-ki-card-shadow: 0 1px 2px rgba(0, 0, 0, 0.06), 0 1px 3px rgba(0, 0, 0, 0.04);
+$o-ki-card-shadow-hover: 0 4px 12px rgba(0, 0, 0, 0.08);
+
+.o_ki_laundry_dashboard,
+.o_ki_laundry_workstation,
+.o_ki_laundry_price_grid {
+    > .o_content {
+        background-color: $o-webclient-background-color;
+    }
+
+    .o_ki_dash,
+    .o_ki_ws,
+    .o_ki_pg {
+        max-width: 1500px;
+        padding-top: map-get($spacers, 4);
+        padding-bottom: map-get($spacers, 4);
+    }
+
+    .min-w-0 {
+        min-width: 0;
+    }
+
+    .o_ki_dash_card {
+        background-color: $o-view-background-color;
+        border: 1px solid $border-color;
+        border-radius: $o-ki-card-radius;
+        box-shadow: $o-ki-card-shadow;
+    }
+
+    .o_ki_dash_card_header {
+        display: flex;
+        align-items: baseline;
+        justify-content: space-between;
+        gap: map-get($spacers, 2);
+        margin-bottom: map-get($spacers, 3);
+
+        h5 {
+            margin: 0;
+            font-weight: 600;
+        }
+    }
+
+    .o_ki_dash_empty {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: map-get($spacers, 2);
+        min-height: 140px;
+        color: $text-muted;
+        text-align: center;
+
+        .fa {
+            font-size: 2rem;
+            opacity: 0.5;
+        }
+    }
+
+    // Clickable rows / bars without button chrome
+    .o_ki_dash_bar,
+    .o_ki_dash_flow_step,
+    .o_ki_dash_kpi,
+    .o_ki_ws_station {
+        appearance: none;
+        font: inherit;
+        color: inherit;
+    }
+}
+
+// ----------------------------------------------------------------------
+// Dashboard
+// ----------------------------------------------------------------------
+
+.o_ki_laundry_dashboard {
+    .o_ki_dash_kpis {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+        gap: map-get($spacers, 3);
+        margin-bottom: map-get($spacers, 3);
+    }
+
+    .o_ki_dash_kpi {
+        display: flex;
+        align-items: center;
+        gap: map-get($spacers, 3);
+        padding: map-get($spacers, 3);
+        transition: box-shadow 0.15s ease-in-out, transform 0.15s ease-in-out;
+
+        &:hover {
+            box-shadow: $o-ki-card-shadow-hover;
+            transform: translateY(-1px);
+        }
+    }
+
+    .o_ki_dash_kpi_icon {
+        display: inline-flex;
+        flex: 0 0 auto;
+        align-items: center;
+        justify-content: center;
+        width: 3rem;
+        height: 3rem;
+        border-radius: 50%;
+        font-size: 1.25rem;
+    }
+
+    .o_ki_dash_kpi_value {
+        font-size: 1.75rem;
+        font-weight: 700;
+        line-height: 1.2;
+    }
+
+    .o_ki_dash_kpi_label {
+        color: $text-muted;
+    }
+
+    @include media-breakpoint-down(sm) {
+        .o_ki_dash_kpi {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: map-get($spacers, 2);
+        }
+
+        .o_ki_dash_kpi_icon {
+            width: 2.25rem;
+            height: 2.25rem;
+            font-size: 1rem;
+        }
+
+        .o_ki_dash_kpi_value {
+            font-size: 1.4rem;
+        }
+    }
+
+    .o_ki_dash_flow {
+        display: flex;
+        align-items: center;
+        gap: map-get($spacers, 2);
+        overflow-x: auto;
+    }
+
+    .o_ki_dash_flow_step {
+        display: flex;
+        flex: 1 1 0;
+        flex-direction: column;
+        align-items: center;
+        min-width: 96px;
+        padding: map-get($spacers, 3) map-get($spacers, 2);
+        border: 1px solid $border-color;
+        border-radius: $o-ki-card-radius;
+        background-color: $o-gray-100;
+        transition: background-color 0.15s ease-in-out, border-color 0.15s ease-in-out;
+
+        &:hover {
+            border-color: $primary;
+        }
+
+        &.o_ki_dash_flow_ready {
+            background-color: rgba($success, 0.12);
+        }
+
+        &.o_ki_dash_flow_delivered {
+            background-color: rgba($primary, 0.08);
+        }
+    }
+
+    .o_ki_dash_flow_count {
+        font-size: 1.5rem;
+        font-weight: 700;
+        line-height: 1.2;
+    }
+
+    .o_ki_dash_flow_label {
+        color: $text-muted;
+        white-space: nowrap;
+    }
+
+    .o_ki_dash_flow_arrow {
+        flex: 0 0 auto;
+        color: $text-muted;
+        font-size: 1.25rem;
+    }
+
+    .o_ki_dash_bar {
+        display: flex;
+        flex-direction: column;
+        gap: map-get($spacers, 1);
+        width: 100%;
+        padding: map-get($spacers, 1) map-get($spacers, 2);
+        border: 0;
+        border-radius: $border-radius;
+        background: transparent;
+        text-align: start;
+
+        &:hover {
+            background-color: $o-gray-100;
+        }
+
+        .progress {
+            height: 0.5rem;
+        }
+    }
+
+    .o_ki_dash_due_time {
+        flex: 0 0 4.5rem;
+        font-weight: 600;
+        font-variant-numeric: tabular-nums;
+    }
+
+    .o_ki_dash_chart canvas {
+        max-width: 100%;
+    }
+}
+
+// ----------------------------------------------------------------------
+// Workstation
+// ----------------------------------------------------------------------
+
+.o_ki_laundry_workstation {
+    .o_ki_ws_help_num {
+        display: inline-flex;
+        flex: 0 0 auto;
+        align-items: center;
+        justify-content: center;
+        width: 1.75rem;
+        height: 1.75rem;
+        border-radius: 50%;
+        background-color: $primary;
+        color: $white;
+        font-weight: 700;
+    }
+
+    .o_ki_ws_stations {
+        display: flex;
+        gap: map-get($spacers, 2);
+        overflow-x: auto;
+        padding-bottom: map-get($spacers, 1);
+    }
+
+    .o_ki_ws_station {
+        display: flex;
+        flex: 0 0 auto;
+        align-items: center;
+        gap: map-get($spacers, 2);
+        padding: map-get($spacers, 2) map-get($spacers, 3);
+        border: 1px solid $border-color;
+        border-radius: 2rem;
+        background-color: $o-view-background-color;
+        box-shadow: $o-ki-card-shadow;
+        font-weight: 500;
+
+        &:hover {
+            border-color: $primary;
+        }
+
+        &.active {
+            border-color: $primary;
+            background-color: $primary;
+            color: $white;
+
+            .o_ki_ws_station_count {
+                background-color: rgba($white, 0.25);
+                color: $white;
+            }
+        }
+    }
+
+    .o_ki_ws_station_count {
+        min-width: 1.75rem;
+        padding: 0 map-get($spacers, 2);
+        border-radius: 1rem;
+        background-color: $o-gray-200;
+        text-align: center;
+        font-size: 0.9em;
+    }
+
+    .o_ki_ws_scan {
+        border-width: 2px;
+        transition: border-color 0.2s ease-in-out;
+
+        &.o_ki_ws_success {
+            border-color: $success;
+        }
+
+        &.o_ki_ws_error {
+            border-color: $danger;
+        }
+    }
+
+    .o_ki_ws_result {
+        padding: map-get($spacers, 3);
+        border-radius: $border-radius-lg;
+
+        &.o_ki_ws_result_success {
+            background-color: rgba($success, 0.1);
+
+            > .fw-bold {
+                color: $success;
+            }
+        }
+
+        &.o_ki_ws_result_error {
+            background-color: rgba($danger, 0.1);
+
+            > .fw-bold {
+                color: $danger;
+            }
+        }
+    }
+
+    .o_ki_ws_route {
+        display: flex;
+        flex-wrap: wrap;
+        gap: map-get($spacers, 1);
+        margin-top: map-get($spacers, 1);
+    }
+
+    .o_ki_ws_route_step {
+        padding: 0 map-get($spacers, 2);
+        border: 1px solid transparent;
+        border-radius: 1rem;
+        font-size: 0.8rem;
+        line-height: 1.6;
+        white-space: nowrap;
+
+        &.o_ki_ws_route_done {
+            background-color: rgba($success, 0.12);
+            color: $success;
+        }
+
+        &.o_ki_ws_route_skipped {
+            background-color: $o-gray-100;
+            color: $text-muted;
+            text-decoration: line-through;
+        }
+
+        &.o_ki_ws_route_current {
+            background-color: $primary;
+            color: $white;
+            font-weight: 600;
+        }
+
+        &.o_ki_ws_route_pending {
+            border-color: $border-color;
+            color: $text-muted;
+        }
+    }
+}
+
+// Big round icon (workstation scan box, empty price list)
+.o_ki_laundry_workstation,
+.o_ki_laundry_price_grid {
+    .o_ki_ws_scan_icon {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 4.5rem;
+        height: 4.5rem;
+        border-radius: 50%;
+        background-color: rgba($primary, 0.1);
+        color: $primary;
+        font-size: 2rem;
+    }
+}
+
+// ----------------------------------------------------------------------
+// Prices
+// ----------------------------------------------------------------------
+
+.o_ki_laundry_price_grid {
+    .o_ki_pg_list {
+        margin: 0 (-map-get($spacers, 2));
+    }
+
+    @include media-breakpoint-up(md) {
+        .o_ki_pg_side {
+            position: sticky;
+            top: 0;
+        }
+
+        .o_ki_pg_list {
+            max-height: 60vh;
+            overflow-y: auto;
+        }
+    }
+
+    .o_ki_pg_list_title {
+        padding: map-get($spacers, 2) map-get($spacers, 2) map-get($spacers, 1);
+        color: $text-muted;
+        font-size: 0.8rem;
+        font-weight: 600;
+        text-transform: uppercase;
+    }
+
+    .o_ki_pg_entry {
+        display: flex;
+        align-items: center;
+        gap: map-get($spacers, 2);
+        padding: map-get($spacers, 2);
+        border: 0;
+        border-radius: $border-radius-lg;
+
+        &.active {
+            background-color: rgba($primary, 0.1);
+            color: inherit;
+            font-weight: 600;
+        }
+    }
+
+    .o_ki_pg_avatar {
+        display: inline-flex;
+        flex: 0 0 auto;
+        align-items: center;
+        justify-content: center;
+        width: 2.25rem;
+        height: 2.25rem;
+        border-radius: 50%;
+        font-size: 0.85rem;
+        font-weight: 700;
+
+        &.o_ki_pg_avatar_lg {
+            width: 3.5rem;
+            height: 3.5rem;
+            font-size: 1.25rem;
+        }
+    }
+
+    .o_ki_pg_rows {
+        display: flex;
+        flex-direction: column;
+        gap: map-get($spacers, 2);
+    }
+
+    .o_ki_pg_row {
+        display: grid;
+        grid-template-columns: auto minmax(0, 1fr) minmax(140px, 220px) 1.25rem;
+        align-items: center;
+        gap: map-get($spacers, 3);
+        padding: map-get($spacers, 2) map-get($spacers, 3);
+        border: 1px solid $border-color;
+        border-radius: $o-ki-card-radius;
+        transition: background-color 0.15s ease-in-out;
+
+        &.o_ki_pg_row_off {
+            background-color: $o-gray-100;
+
+            .o_ki_pg_row_name {
+                color: $text-muted;
+            }
+        }
+
+        .form-switch .form-check-input {
+            width: 2.5em;
+            height: 1.35em;
+            cursor: pointer;
+        }
+    }
+
+    .o_ki_pg_row_name {
+        margin: 0;
+        cursor: pointer;
+    }
+
+    .o_ki_pg_price .form-control {
+        font-weight: 600;
+        font-variant-numeric: tabular-nums;
+    }
+
+    .o_ki_pg_status {
+        text-align: center;
+    }
+
+    @include media-breakpoint-down(sm) {
+        .o_ki_pg_row {
+            grid-template-columns: auto minmax(0, 1fr) 1.25rem;
+
+            .o_ki_pg_price {
+                grid-column: 1 / -1;
+                grid-row: 2;
+            }
+        }
+    }
+}

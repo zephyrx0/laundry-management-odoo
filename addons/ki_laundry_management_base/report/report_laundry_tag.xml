@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    ============================================================================
+     Kalvyai | Laundry Management - Base
+     Copyright (c) 2026-Present Kalvyai (https://kalvyai.com)
+     License: OPL-1. See the LICENSE file.
+    ============================================================================
+-->
+<odoo>
+    <template id="report_laundry_tag">
+        <t t-call="web.html_container">
+            <t t-call="web.basic_layout">
+                <t t-foreach="docs" t-as="item">
+                    <div class="page o_ki_laundry_tag" style="font-size: 9px; font-family: sans-serif; page-break-after: always; line-height: 1.15;">
+                        <div style="display: flex; justify-content: space-between;">
+                            <strong t-out="item.order_id.name"/>
+                            <strong t-if="item.is_urgent">URGENT</strong>
+                        </div>
+                        <div t-field="item.barcode" t-options="{'widget': 'barcode', 'symbology': 'Code128', 'width': 600, 'height': 100, 'img_style': 'width: 100%; height: 28px;'}"/>
+                        <div style="display: flex; justify-content: space-between;">
+                            <span t-out="item.barcode"/>
+                            <span><t t-out="item.garment_id.code or item.garment_id.name or ''"/> <t t-out="item.sequence_number"/>/<t t-out="len(item.order_id.item_ids)"/></span>
+                        </div>
+                        <div t-out="item.partner_id.name" style="overflow: hidden; white-space: nowrap;"/>
+                        <div style="overflow: hidden; white-space: nowrap;">
+                            <t t-out="', '.join(item.intake_id.service_ids.mapped('name'))"/>
+                            <t t-if="item.parts_count &gt; 1"> | <t t-out="item.parts_count"/> parts</t>
+                            <t t-if="item.item_type == 'bag' and item.weight"> | <t t-out="round(item.weight, 2)"/> kg</t>
+                        </div>
+                        <div t-if="item.date_due">Due: <span t-field="item.date_due" t-options="{'widget': 'datetime', 'format': 'short'}"/></div>
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+</odoo>

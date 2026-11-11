@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    ============================================================================
+     Kalvyai | Laundry Management - Base
+     Copyright (c) 2026-Present Kalvyai (https://kalvyai.com)
+     License: OPL-1. See the LICENSE file.
+    ============================================================================
+-->
+<odoo noupdate="1">
+    <record id="seq_laundry_order" model="ir.sequence">
+        <field name="name">Laundry Order</field>
+        <field name="code">ki.laundry.order</field>
+        <field name="prefix">LD/%(year)s/</field>
+        <field name="padding">5</field>
+        <field name="company_id" eval="False"/>
+    </record>
+    <record id="seq_laundry_order_barcode" model="ir.sequence">
+        <field name="name">Laundry Order Barcode</field>
+        <field name="code">ki.laundry.order.barcode</field>
+        <field name="prefix">L</field>
+        <field name="padding">8</field>
+        <field name="company_id" eval="False"/>
+    </record>
+</odoo>

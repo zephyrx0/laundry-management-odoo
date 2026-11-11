@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    ============================================================================
+     Kalvyai | Laundry Management - Base
+     Copyright (c) 2026-Present Kalvyai (https://kalvyai.com)
+     License: OPL-1. See the LICENSE file.
+    ============================================================================
+-->
+<odoo>
+    <record id="view_laundry_invoice_wizard_form" model="ir.ui.view">
+        <field name="name">ki.laundry.invoice.wizard.form</field>
+        <field name="model">ki.laundry.invoice.wizard</field>
+        <field name="arch" type="xml">
+            <form>
+                <field name="order_ids" invisible="1"/>
+                <field name="currency_id" invisible="1"/>
+                <group>
+                    <field name="order_count" string="Orders"/>
+                    <field name="invoice_mode" widget="radio" invisible="order_count != 1"/>
+                    <field name="consolidate" invisible="invoice_mode != 'regular' or order_count &lt; 2"/>
+                    <field name="advance_method" widget="radio" invisible="invoice_mode != 'advance'"/>
+                    <field name="advance_percent" invisible="invoice_mode != 'advance' or advance_method != 'percent'"/>
+                    <field name="advance_fixed" invisible="invoice_mode != 'advance' or advance_method != 'fixed'"/>
+                </group>
+                <p class="text-muted" invisible="invoice_mode != 'regular'">
+                    Only quantities not invoiced yet are billed. Advances already invoiced are deducted.
+                    Per-kg loads are invoiced once weighed.
+                </p>
+                <footer>
+                    <button name="action_create_invoices" type="object" string="Create Invoice" class="btn-primary"/>
+                    <button string="Discard" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+</odoo>

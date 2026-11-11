@@ -1,0 +1,78 @@
+// ============================================================================
+//  Web Responsive Enterprise — kanban / list / form polish
+// ============================================================================
+
+// ---------------------------------------------------------------------------
+//  Kanban: rounded cards, soft shadow, hover lift, roomier columns.
+// ---------------------------------------------------------------------------
+.o_web_client .o_kanban_renderer {
+    .o_kanban_record {
+        border-radius: var(--wre-radius);
+        border-color: var(--wre-border);
+        box-shadow: var(--wre-shadow-sm);
+        transition: box-shadow var(--wre-transition, 160ms ease),
+                    transform var(--wre-transition, 160ms ease);
+
+        &:hover {
+            box-shadow: var(--wre-shadow-md);
+            transform: translateY(-2px);
+        }
+    }
+
+    // A touch more breathing room between grouped columns.
+    &.o_kanban_grouped .o_kanban_group {
+        padding-inline: 4px;
+    }
+}
+
+// ---------------------------------------------------------------------------
+//  List: sticky header that reads clearly while scrolling.
+// ---------------------------------------------------------------------------
+.o_web_client .o_list_renderer {
+    .o_list_table {
+        thead th {
+            position: sticky;
+            top: 0;
+            z-index: 2;
+            background-color: var(--wre-surface-2);
+            border-bottom: 1px solid var(--wre-border);
+        }
+
+        // Gentle row hover for scannability.
+        tbody tr.o_data_row:hover > td {
+            background-color: rgba(135, 90, 123, .05);
+        }
+    }
+}
+
+// ---------------------------------------------------------------------------
+//  Form: floating sheet with Enterprise spacing + cleaner notebook tabs.
+// ---------------------------------------------------------------------------
+.o_web_client .o_form_view {
+    .o_form_sheet_bg {
+        background-color: var(--wre-bg);
+    }
+
+    .o_form_sheet {
+        border-radius: var(--wre-radius-lg);
+        border: 1px solid var(--wre-border);
+        box-shadow: var(--wre-shadow-sm);
+    }
+
+    // Notebook tabs: underline-style active tab in the accent colour.
+    .o_notebook .o_notebook_headers .nav-link {
+        border: 0;
+        border-bottom: 2px solid transparent;
+        transition: color var(--wre-transition, 160ms ease),
+                    border-color var(--wre-transition, 160ms ease);
+
+        &.active {
+            color: var(--wre-accent);
+            border-bottom-color: var(--wre-accent);
+            background-color: transparent;
+        }
+        &:hover:not(.active) {
+            border-bottom-color: var(--wre-border);
+        }
+    }
+}

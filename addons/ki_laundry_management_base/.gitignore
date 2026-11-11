@@ -1,0 +1,23 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+
+# Editors and OS
+.idea/
+.vscode/
+*.swp
+*~
+.DS_Store
+Thumbs.db
+
+# Logs, backups and merge leftovers
+*.log
+*.bak
+*.orig
+*.rej
+
+# Local tooling (never ship these to the App Store)
+node_modules/
+.env
+*.local.*

@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    ============================================================================
+     Kalvyai | Laundry Management - Base
+     Copyright (c) 2026-Present Kalvyai (https://kalvyai.com)
+     License: OPL-1. See the LICENSE file.
+    ============================================================================
+-->
+<odoo noupdate="1">
+    <record id="step_inspect" model="ki.laundry.process.step">
+        <field name="name">Inspect</field>
+        <field name="code">INSP</field>
+        <field name="sequence">10</field>
+        <field name="step_type">intake</field>
+    </record>
+    <record id="step_spot_clean" model="ki.laundry.process.step">
+        <field name="name">Spot Clean</field>
+        <field name="code">SPOT</field>
+        <field name="sequence">15</field>
+        <field name="allow_skip" eval="True"/>
+    </record>
+    <record id="step_wash" model="ki.laundry.process.step">
+        <field name="name">Wash</field>
+        <field name="code">WASH</field>
+        <field name="sequence">20</field>
+    </record>
+    <record id="step_dry_clean" model="ki.laundry.process.step">
+        <field name="name">Dry Clean</field>
+        <field name="code">DRYC</field>
+        <field name="sequence">25</field>
+    </record>
+    <record id="step_dry" model="ki.laundry.process.step">
+        <field name="name">Dry</field>
+        <field name="code">DRY</field>
+        <field name="sequence">30</field>
+    </record>
+    <record id="step_iron" model="ki.laundry.process.step">
+        <field name="name">Iron / Press</field>
+        <field name="code">IRON</field>
+        <field name="sequence">40</field>
+    </record>
+    <record id="step_fold" model="ki.laundry.process.step">
+        <field name="name">Fold</field>
+        <field name="code">FOLD</field>
+        <field name="sequence">45</field>
+        <field name="allow_skip" eval="True"/>
+    </record>
+    <record id="step_qc" model="ki.laundry.process.step">
+        <field name="name">Quality Check</field>
+        <field name="code">QC</field>
+        <field name="sequence">90</field>
+        <field name="step_type">qc</field>
+    </record>
+    <record id="step_pack" model="ki.laundry.process.step">
+        <field name="name">Pack</field>
+        <field name="code">PACK</field>
+        <field name="sequence">100</field>
+        <field name="step_type">pack</field>
+    </record>
+</odoo>

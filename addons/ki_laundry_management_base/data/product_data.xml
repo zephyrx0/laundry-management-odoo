@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    ============================================================================
+     Kalvyai | Laundry Management - Base
+     Copyright (c) 2026-Present Kalvyai (https://kalvyai.com)
+     License: OPL-1. See the LICENSE file.
+    ============================================================================
+-->
+<odoo noupdate="1">
+
+    <record id="product_attribute_garment" model="product.attribute">
+        <field name="name">Garment</field>
+        <field name="create_variant">always</field>
+        <field name="display_type">radio</field>
+        <field name="ki_laundry_is_garment" eval="True"/>
+    </record>
+
+    <record id="product_category_laundry" model="product.category">
+        <field name="name">Laundry</field>
+    </record>
+
+    <record id="product_laundry_urgent" model="product.product">
+        <field name="name">Urgent Service Surcharge</field>
+        <field name="type">service</field>
+        <field name="categ_id" ref="product_category_laundry"/>
+        <field name="list_price">0.0</field>
+        <field name="sale_ok" eval="False"/>
+        <field name="purchase_ok" eval="False"/>
+        <field name="default_code">LAUNDRY-URGENT</field>
+    </record>
+
+    <record id="product_laundry_advance" model="product.product">
+        <field name="name">Laundry Advance</field>
+        <field name="type">service</field>
+        <field name="categ_id" ref="product_category_laundry"/>
+        <field name="list_price">0.0</field>
+        <field name="sale_ok" eval="False"/>
+        <field name="purchase_ok" eval="False"/>
+        <field name="taxes_id" eval="[(5, 0, 0)]"/>
+        <field name="default_code">LAUNDRY-ADVANCE</field>
+    </record>
+
+    <record id="product_laundry_storage" model="product.product">
+        <field name="name">Laundry Storage Fee (per day)</field>
+        <field name="type">service</field>
+        <field name="categ_id" ref="product_category_laundry"/>
+        <field name="list_price">0.0</field>
+        <field name="sale_ok" eval="False"/>
+        <field name="purchase_ok" eval="False"/>
+        <field name="default_code">LAUNDRY-STORAGE</field>
+    </record>
+
+</odoo>

@@ -1,0 +1,241 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    ============================================================================
+     Kalvyai | Laundry Management - Base
+     Copyright (c) 2026-Present Kalvyai (https://kalvyai.com)
+     License: OPL-1. See the LICENSE file.
+    ============================================================================
+-->
+<odoo>
+    <record id="view_laundry_order_item_list" model="ir.ui.view">
+        <field name="name">ki.laundry.order.item.list</field>
+        <field name="model">ki.laundry.order.item</field>
+        <field name="arch" type="xml">
+            <list create="0" decoration-success="state in ('ready', 'delivered')" decoration-danger="state in ('damaged', 'lost')"
+                  decoration-warning="state == 'rework'">
+                <field name="barcode"/>
+                <field name="name"/>
+                <field name="order_id"/>
+                <field name="partner_id" optional="show"/>
+                <field name="current_step_id"/>
+                <field name="progress" widget="progressbar" optional="show"/>
+                <field name="date_due" widget="remaining_days" optional="show"/>
+                <field name="is_urgent" optional="show"/>
+                <field name="rack_location" optional="show"/>
+                <field name="company_id" groups="base.group_multi_company" optional="hide"/>
+                <field name="state" widget="badge"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_laundry_order_item_kanban" model="ir.ui.view">
+        <field name="name">ki.laundry.order.item.kanban</field>
+        <field name="model">ki.laundry.order.item</field>
+        <field name="arch" type="xml">
+            <kanban default_group_by="current_step_id" create="0" quick_create="false" group_create="false"
+                    group_delete="false" group_edit="false" records_draggable="false" class="o_kanban_small_column">
+                <templates>
+                    <t t-name="card">
+                        <div class="d-flex justify-content-between">
+                            <field name="barcode" class="fw-bold"/>
+                            <span t-if="record.is_urgent.raw_value" class="badge text-bg-danger">Urgent</span>
+                        </div>
+                        <field name="name"/>
+                        <field name="partner_id" class="text-muted"/>
+                        <div class="d-flex justify-content-between">
+                            <field name="date_due" widget="remaining_days"/>
+                            <field name="state" widget="label_selection"
+                                   options="{'classes': {'pending': 'default', 'in_process': 'info', 'rework': 'warning', 'ready': 'success', 'damaged': 'danger'}}"/>
+                        </div>
+                        <field name="is_urgent" invisible="1"/>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <record id="view_laundry_order_item_form" model="ir.ui.view">
+        <field name="name">ki.laundry.order.item.form</field>
+        <field name="model">ki.laundry.order.item</field>
+        <field name="arch" type="xml">
+            <form create="0">
+                <header>
+                    <button name="action_complete_step" type="object" string="Complete Step" class="btn-primary"
+                            invisible="state not in ('pending', 'in_process', 'rework')"/>
+                    <button name="action_skip_step" type="object" string="Skip Step"
+                            invisible="state not in ('pending', 'in_process', 'rework')"/>
+                    <button name="action_mark_ready" type="object" string="Mark Ready"
+                            invisible="state not in ('pending', 'in_process', 'rework')"/>
+                    <button name="action_open_rework_wizard" type="object" string="Rework"
+                            invisible="state not in ('in_process', 'ready', 'rework', 'damaged')"/>
+                    <button name="action_mark_damaged" type="object" string="Damaged"
+                            invisible="state in ('delivered', 'lost', 'cancelled', 'damaged')"
+                            groups="ki_laundry_management_base.group_laundry_manager"
+                            confirm="Mark this item as damaged?"/>
+                    <button name="action_mark_lost" type="object" string="Lost"
+                            invisible="state in ('delivered', 'lost', 'cancelled')"
+                            groups="ki_laundry_management_base.group_laundry_manager"
+                            confirm="Mark this item as lost?"/>
+                    <button name="action_found" type="object" string="Found" invisible="state != 'lost'"/>
+                    <button name="action_print_tag" type="object" string="Print Tag"/>
+                    <field name="state" widget="statusbar" statusbar_visible="pending,in_process,ready,delivered"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1><field name="barcode"/></h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="name"/>
+                            <field name="order_id"/>
+                            <field name="partner_id"/>
+                            <field name="garment_id" invisible="not garment_id"/>
+                            <field name="item_type"/>
+                            <field name="parts_count" invisible="item_type != 'set'" readonly="1"/>
+                            <field name="piece_count" invisible="piece_count &lt;= 1" readonly="1"/>
+                            <field name="weight" invisible="item_type != 'bag'" readonly="1"/>
+                        </group>
+                        <group>
+                            <field name="current_step_id"/>
+                            <field name="progress" widget="progressbar"/>
+                            <field name="date_due"/>
+                            <field name="is_urgent"/>
+                            <field name="rack_location"/>
+                            <field name="price_total"/>
+                            <field name="currency_id" invisible="1"/>
+                        </group>
+                    </group>
+                    <group>
+                        <field name="description"/>
+                        <field name="has_damage"/>
+                        <field name="damage_note" invisible="not damage_note"/>
+                        <field name="attachment_ids" widget="many2many_binary"/>
+                    </group>
+                    <notebook>
+                        <page string="Route" name="route">
+                            <field name="route_ids" readonly="1">
+                                <list>
+                                    <field name="sequence"/>
+                                    <field name="step_id"/>
+                                    <field name="state" widget="badge" decoration-success="state == 'done'" decoration-muted="state == 'skipped'"/>
+                                    <field name="user_id"/>
+                                    <field name="date_done"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Services" name="services">
+                            <field name="line_ids" readonly="1">
+                                <list>
+                                    <field name="product_id"/>
+                                    <field name="product_uom_qty"/>
+                                    <field name="currency_id" column_invisible="True"/>
+                                    <field name="price_total"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="History" name="history">
+                            <field name="log_ids">
+                                <list>
+                                    <field name="date"/>
+                                    <field name="action"/>
+                                    <field name="step_from_id"/>
+                                    <field name="step_to_id"/>
+                                    <field name="user_id"/>
+                                    <field name="note"/>
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_laundry_order_item_search" model="ir.ui.view">
+        <field name="name">ki.laundry.order.item.search</field>
+        <field name="model">ki.laundry.order.item</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="barcode"/>
+                <field name="order_id"/>
+                <field name="partner_id"/>
+                <field name="current_step_id"/>
+                <field name="rack_location"/>
+                <filter string="In Process" name="open" domain="[('state', 'in', ('pending', 'in_process', 'rework'))]"/>
+                <filter string="Ready" name="ready" domain="[('state', '=', 'ready')]"/>
+                <filter string="Rework" name="rework" domain="[('state', '=', 'rework')]"/>
+                <filter string="Damaged / Lost" name="issues" domain="[('state', 'in', ('damaged', 'lost'))]"/>
+                <separator/>
+                <filter string="Urgent" name="urgent" domain="[('is_urgent', '=', True)]"/>
+                <filter string="Overdue" name="overdue" domain="[('date_due', '&lt;', context_today().strftime('%Y-%m-%d')), ('state', 'in', ('pending', 'in_process', 'rework'))]"/>
+                <group>
+                    <filter string="Step" name="group_step" context="{'group_by': 'current_step_id'}"/>
+                    <filter string="Status" name="group_state" context="{'group_by': 'state'}"/>
+                    <filter string="Order" name="group_order" context="{'group_by': 'order_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_laundry_order_item" model="ir.actions.act_window">
+        <field name="name">Items</field>
+        <field name="res_model">ki.laundry.order.item</field>
+        <field name="view_mode">kanban,list,form</field>
+        <field name="search_view_id" ref="view_laundry_order_item_search"/>
+        <field name="context">{'search_default_open': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">No garment in process</p>
+            <p>Items are created when the garments of an order are received.</p>
+        </field>
+    </record>
+
+    <record id="action_laundry_order_item_overdue" model="ir.actions.act_window">
+        <field name="name">Items by Step / Overdue</field>
+        <field name="res_model">ki.laundry.order.item</field>
+        <field name="view_mode">list,kanban,form</field>
+        <field name="search_view_id" ref="view_laundry_order_item_search"/>
+        <field name="context">{'search_default_overdue': 1, 'search_default_group_step': 1}</field>
+    </record>
+
+    <record id="view_laundry_item_log_list" model="ir.ui.view">
+        <field name="name">ki.laundry.item.log.list</field>
+        <field name="model">ki.laundry.item.log</field>
+        <field name="arch" type="xml">
+            <list create="0" edit="0" delete="0">
+                <field name="date"/>
+                <field name="item_id"/>
+                <field name="order_id"/>
+                <field name="action"/>
+                <field name="step_from_id"/>
+                <field name="step_to_id"/>
+                <field name="user_id"/>
+                <field name="note" optional="show"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_laundry_item_log_search" model="ir.ui.view">
+        <field name="name">ki.laundry.item.log.search</field>
+        <field name="model">ki.laundry.item.log</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="item_id"/>
+                <field name="order_id"/>
+                <field name="user_id"/>
+                <filter string="Today" name="today" domain="[('date', '&gt;=', context_today().strftime('%Y-%m-%d'))]"/>
+                <group>
+                    <filter string="User" name="group_user" context="{'group_by': 'user_id'}"/>
+                    <filter string="Step" name="group_step" context="{'group_by': 'step_from_id'}"/>
+                    <filter string="Action" name="group_action" context="{'group_by': 'action'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_laundry_item_log" model="ir.actions.act_window">
+        <field name="name">Item History</field>
+        <field name="res_model">ki.laundry.item.log</field>
+        <field name="view_mode">list,pivot</field>
+    </record>
+</odoo>

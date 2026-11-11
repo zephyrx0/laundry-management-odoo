@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    ============================================================================
+     Kalvyai | Laundry Management - Base
+     Copyright (c) 2026-Present Kalvyai (https://kalvyai.com)
+     License: OPL-1. See the LICENSE file.
+    ============================================================================
+-->
+<odoo>
+    <record id="view_laundry_rework_wizard_form" model="ir.ui.view">
+        <field name="name">ki.laundry.rework.wizard.form</field>
+        <field name="model">ki.laundry.rework.wizard</field>
+        <field name="arch" type="xml">
+            <form>
+                <field name="available_step_ids" invisible="1"/>
+                <group>
+                    <field name="item_ids" widget="many2many_tags" readonly="1"/>
+                    <field name="step_id" options="{'no_create': True}" placeholder="First processing step"/>
+                    <field name="note"/>
+                </group>
+                <footer>
+                    <button name="action_confirm" type="object" string="Send to Rework" class="btn-primary"/>
+                    <button string="Discard" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+</odoo>

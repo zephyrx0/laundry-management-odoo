@@ -1,0 +1,31 @@
+// ============================================================================
+//  Web Responsive Enterprise — control panel (breadcrumb + actions + search)
+// ----------------------------------------------------------------------------
+//  Make the control panel sticky with a soft separator so the breadcrumb and
+//  view switcher stay reachable while scrolling long lists/forms.
+// ============================================================================
+
+.o_web_client .o_control_panel {
+    position: sticky;
+    top: 0;
+    z-index: 6;
+    background-color: var(--wre-surface);
+    border-bottom: 1px solid var(--wre-border);
+    backdrop-filter: saturate(1.1);
+
+    // Breadcrumb: clearer hierarchy, accent on the active leaf.
+    .breadcrumb-item.active,
+    .o_breadcrumb .active {
+        font-weight: 600;
+        color: var(--wre-text);
+    }
+
+    .o_breadcrumb a:hover {
+        color: var(--wre-accent);
+        text-decoration: none;
+    }
+}
+
+// NOTE: the control-panel search bar is intentionally left to Odoo's default
+// styling (no custom pill shape, accent border or focus-ring glow) for a clean
+// look that matches the stock control panel.

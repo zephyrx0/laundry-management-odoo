@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    ============================================================================
+     Kalvyai | Laundry Management - Base
+     Copyright (c) 2026-Present Kalvyai (https://kalvyai.com)
+     License: OPL-1. See the LICENSE file.
+    ============================================================================
+-->
+<odoo>
+    <menuitem id="menu_laundry_root" name="Laundry" sequence="40"
+              web_icon="ki_laundry_management_base,static/description/icon.png"
+              groups="ki_laundry_management_base.group_laundry_worker"/>
+
+    <menuitem id="menu_laundry_dashboard" name="Dashboard" parent="menu_laundry_root" sequence="5"
+              action="action_laundry_dashboard"/>
+
+    <menuitem id="menu_laundry_orders" name="Orders" parent="menu_laundry_root" sequence="10"/>
+    <menuitem id="menu_laundry_order_all" name="All Orders" parent="menu_laundry_orders" sequence="10"
+              action="action_laundry_order"/>
+    <menuitem id="menu_laundry_order_in_process" name="In Process" parent="menu_laundry_orders" sequence="30"
+              action="action_laundry_order_in_process" groups="ki_laundry_management_base.group_laundry_worker"/>
+    <menuitem id="menu_laundry_order_ready" name="Ready to Collect" parent="menu_laundry_orders" sequence="40"
+              action="action_laundry_order_ready" groups="ki_laundry_management_base.group_laundry_worker"/>
+
+    <menuitem id="menu_laundry_operations" name="Operations" parent="menu_laundry_root" sequence="20"
+              groups="ki_laundry_management_base.group_laundry_worker"/>
+    <menuitem id="menu_laundry_workstation" name="Workstation" parent="menu_laundry_operations" sequence="10"
+              action="action_laundry_workstation"/>
+    <menuitem id="menu_laundry_items" name="Items" parent="menu_laundry_operations" sequence="20"
+              action="action_laundry_order_item"/>
+    <menuitem id="menu_laundry_item_log" name="Item History" parent="menu_laundry_operations" sequence="30"
+              action="action_laundry_item_log"/>
+
+    <menuitem id="menu_laundry_reporting" name="Reporting" parent="menu_laundry_root" sequence="80"
+              groups="ki_laundry_management_base.group_laundry_user"/>
+    <menuitem id="menu_laundry_report_orders" name="Orders Analysis" parent="menu_laundry_reporting" sequence="10"
+              action="action_laundry_order_analysis"/>
+    <menuitem id="menu_laundry_report_items" name="Items by Step / Overdue" parent="menu_laundry_reporting" sequence="20"
+              action="action_laundry_order_item_overdue"/>
+    <menuitem id="menu_laundry_report_unclaimed" name="Unclaimed Orders" parent="menu_laundry_reporting" sequence="30"
+              action="action_laundry_order_unclaimed"/>
+
+    <menuitem id="menu_laundry_config" name="Configuration" parent="menu_laundry_root" sequence="100"
+              groups="ki_laundry_management_base.group_laundry_manager"/>
+    <menuitem id="menu_laundry_settings" name="Settings" parent="menu_laundry_config" sequence="1"
+              action="action_laundry_config_settings" groups="base.group_system"/>
+    <menuitem id="menu_laundry_services" name="Services" parent="menu_laundry_config" sequence="10"
+              action="action_laundry_service"/>
+    <menuitem id="menu_laundry_addons" name="Add-ons" parent="menu_laundry_config" sequence="15"
+              action="action_laundry_addon"/>
+    <menuitem id="menu_laundry_garments" name="Garments" parent="menu_laundry_config" sequence="20"
+              action="action_laundry_garment"/>
+    <menuitem id="menu_laundry_garment_categories" name="Garment Categories" parent="menu_laundry_config" sequence="25"
+              action="action_laundry_garment_category"/>
+    <menuitem id="menu_laundry_price_grid" name="Prices" parent="menu_laundry_config" sequence="30"
+              action="action_laundry_price_grid"/>
+    <menuitem id="menu_laundry_offers" name="Offers" parent="menu_laundry_config" sequence="35"
+              action="action_laundry_offer"/>
+    <menuitem id="menu_laundry_steps" name="Process Steps" parent="menu_laundry_config" sequence="40"
+              action="action_laundry_process_step"/>
+</odoo>

@@ -1,0 +1,202 @@
+KALVYAI SOFTWARE LICENCE AGREEMENT
+==================================
+
+Product   : Laundry Management - Base (technical name: ki_laundry_management_base)
+Licensor  : kalvyai
+Contact   : kalvyai.admin@gmail.com
+Copyright : (c) 2026 kalvyai. All Rights Reserved.
+
+This Software Licence Agreement ("Agreement") is made effective on the date of
+purchase of the Software between kalvyai ("Licensor") and the person or entity
+that purchases the Software ("Licensee").
+
+
+1. DEFINITIONS
+--------------
+
+"Software" means the Odoo module identified above, including its Source Code,
+data files, views, images, videos and Documentation, together with every
+update, error correction and new version supplied by the Licensor.
+
+"Source Code" means the human-readable form of the Software (Python, XML,
+JavaScript, SCSS, HTML and similar files) as maintained by the Licensor.
+
+"Documentation" means the manuals, README, changelog, App Store description
+and any other material describing the installation, configuration or use of
+the Software.
+
+"Instance" means one Odoo database used in production, together with its
+non-production copies (staging, test and development databases) used only to
+prepare or maintain that production database.
+
+"Derivative Work" means any modification, adaptation, translation or other
+work based on the Software or any part of it.
+
+
+2. GRANT OF LICENCE
+-------------------
+
+2.1 Subject to payment of the Licence Fee and to this Agreement, the Licensor
+    grants the Licensee a worldwide, non-exclusive, non-transferable,
+    perpetual licence to install and use the Software on ONE (1) Instance,
+    solely for the internal business purposes of the Licensee.
+
+2.2 The Licensee may modify the Software, or have a developer or agency modify
+    it on the Licensee's behalf, solely to adapt it to the Licensee's own
+    Instance. The Licensee and any such developer or agency remain bound by
+    this Agreement and may not sell, publish or distribute the modified
+    Software.
+
+2.3 A separate licence must be purchased for each additional production
+    Instance.
+
+
+3. RESTRICTIONS
+---------------
+
+Except as expressly permitted in Section 2, the Licensee shall not:
+
+(a) copy, distribute, sell, resell, sublicense, rent, lease, lend or otherwise
+    make the Software or any Derivative Work available to any third party,
+    with or without charge;
+
+(b) publish the Software, its Source Code or any Derivative Work on any public
+    location, including public code repositories (such as public GitHub or
+    GitLab projects), forums, file-sharing services or other marketplaces;
+
+(c) remove, alter or hide any copyright notice, licence header or kalvyai
+    branding contained in the Software;
+
+(d) use the Software, or any part of it, to build a product that competes with
+    the Software;
+
+(e) transfer the licence to another Instance or another person without the
+    Licensor's prior written consent.
+
+Private, access-controlled backups and private source-control repositories of
+the Licensee are permitted, provided that no unauthorised person can access
+them.
+
+
+4. OWNERSHIP
+------------
+
+4.1 The Software is licensed, not sold. All right, title, copyright and other
+    intellectual property rights in the Software, its Source Code, its
+    Documentation and all updates remain the exclusive property of kalvyai.
+
+4.2 All rights in any Derivative Work, to the extent it incorporates the
+    Software, remain with kalvyai. The Licensee's own separate code that does
+    not incorporate the Software remains the property of the Licensee.
+
+
+5. LICENCE FEE AND REFUNDS
+--------------------------
+
+5.1 The Licensee shall pay the Licence Fee displayed on the store page from
+    which the Software is purchased, in full and in advance.
+
+5.2 Refunds are governed by the refund policy of the store through which the
+    Software was purchased (for example, the Odoo Apps Store). Where no such
+    policy applies, the Licence Fee is non-refundable once the Software has
+    been downloaded.
+
+
+6. SUPPORT AND UPDATES
+----------------------
+
+6.1 The Licensor provides free support for ninety (90) days from the date of
+    purchase for questions, configuration help and bug fixes related to the
+    Software. Support does not cover data recovery, third-party modules,
+    custom developments or issues caused by changes made by the Licensee.
+
+6.2 Updates for the purchased Odoo version, when released, are provided free
+    of charge. Versions for other Odoo releases may require a separate
+    purchase.
+
+6.3 Support requests are handled by email at support@kalvyai.com.
+
+
+7. THIRD-PARTY SERVICES
+-----------------------
+
+Where the Software connects to services operated by third parties chosen by
+the Licensee, use of those services is subject to their own terms, pricing
+and policies, which the Licensee accepts directly with each provider. The
+Licensor is not responsible for the availability, pricing, policy changes or
+behaviour of those services.
+
+
+8. WARRANTY
+-----------
+
+8.1 The Licensor warrants that, at the time of purchase, the Software
+    performs materially as described in its Documentation.
+
+8.2 Except as stated in Section 8.1, the Software is provided "AS IS",
+    without warranty of any kind, express or implied, including fitness for
+    a particular purpose and non-infringement of third-party rights.
+
+
+9. LIMITATION OF LIABILITY
+--------------------------
+
+To the maximum extent permitted by law, the Licensor shall not be liable for
+any indirect, incidental, special, consequential or punitive damages,
+including loss of profits, revenue, data, business or goodwill, arising out of
+or in connection with the Software or this Agreement. The Licensor's total
+aggregate liability shall not exceed the Licence Fee actually paid by the
+Licensee for the Software giving rise to the claim.
+
+
+10. INDEMNIFICATION
+-------------------
+
+The Licensee shall indemnify and hold harmless the Licensor against any claim,
+loss, damage or expense (including reasonable legal fees) arising from the
+Licensee's breach of this Agreement or from the Licensee's use of the Software
+in violation of applicable law or of the terms of any third-party service.
+
+
+11. TERM AND TERMINATION
+------------------------
+
+11.1 This Agreement takes effect on payment of the Licence Fee and continues
+     until terminated.
+
+11.2 The Licensor may terminate this Agreement with immediate effect if the
+     Licensee breaches any of its terms. The Licensee may terminate it at any
+     time by uninstalling and destroying all copies of the Software.
+
+11.3 On termination the Licensee shall stop using the Software and destroy
+     all copies. Sections 3, 4, 9, 10 and 12 survive termination.
+
+
+12. GOVERNING LAW AND DISPUTES
+------------------------------
+
+This Agreement is governed by the laws of India. Any dispute arising out of or
+in connection with this Agreement shall first be addressed through good-faith
+negotiation and, failing resolution within thirty (30) days, shall be subject
+to the exclusive jurisdiction of the courts at Delhi, India.
+
+
+13. GENERAL
+-----------
+
+13.1 This Agreement is the entire agreement between the parties regarding the
+     Software and supersedes all prior understandings.
+
+13.2 If any provision is held unenforceable, it shall be modified to the
+     minimum extent necessary to make it enforceable, and the remaining
+     provisions continue in full force.
+
+13.3 The Licensor may update this Agreement for future versions of the
+     Software. The version shipped with the copy of the Software purchased by
+     the Licensee applies to that copy.
+
+13.4 By purchasing, installing or using the Software, the Licensee confirms
+     that it has read, understood and agreed to this Agreement.
+
+
+(c) 2026 kalvyai. All Rights Reserved.

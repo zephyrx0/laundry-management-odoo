@@ -1,0 +1,199 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    ============================================================================
+     Kalvyai | Laundry Management - Base
+     Copyright (c) 2026-Present Kalvyai (https://kalvyai.com)
+     License: OPL-1. See the LICENSE file.
+    ============================================================================
+-->
+<templates xml:space="preserve">
+
+    <t t-name="ki_laundry_management_base.PriceInput">
+        <div class="input-group o_ki_pg_price">
+            <span t-if="state.currency.position === 'before'" class="input-group-text" t-out="state.currency.symbol"/>
+            <input type="text" inputmode="decimal" class="form-control text-end"
+                   t-att-value="displayPrice(value)" t-att-disabled="disabled" t-att-placeholder="disabled ? 'Not offered' : ''"
+                   t-att-aria-label="label" t-on-change="(ev) => this.onPriceChange(ev, priceRecord, priceGarment)" t-on-keydown="onPriceKeydown"/>
+            <span t-if="state.currency.position !== 'before'" class="input-group-text" t-out="state.currency.symbol"/>
+            <span t-if="unit" class="input-group-text">/ <t t-out="unit"/></span>
+        </div>
+        <span class="o_ki_pg_status">
+            <i t-if="state.saving[priceKey]" class="fa fa-circle-o-notch fa-spin text-muted" title="Saving"/>
+            <i t-elif="state.saved[priceKey]" class="fa fa-check text-success" title="Saved"/>
+        </span>
+    </t>
+
+    <t t-name="ki_laundry_management_base.PriceGrid">
+        <div t-att-class="props.className" class="o_ki_laundry_price_grid">
+            <Layout display="display">
+                <t t-set-slot="control-panel-create-button">
+                    <button type="button" class="btn btn-primary" t-on-click="newService">New Service</button>
+                </t>
+                <div t-if="state.loaded" class="o_ki_pg container-fluid">
+
+                    <!-- Nothing to price yet -->
+                    <div t-if="!hasServices" class="o_ki_dash_card o_ki_pg_welcome text-center p-5">
+                        <span class="o_ki_ws_scan_icon"><i class="fa fa-tags" aria-hidden="true"/></span>
+                        <h3 class="mt-3">Set up your price list in 2 steps</h3>
+                        <p class="text-muted mb-4">
+                            1. Create the services you sell (Wash, Dry Clean, Iron...).<br/>
+                            2. Come back here, pick a garment and type its price for each service.
+                        </p>
+                        <button type="button" class="btn btn-primary btn-lg" t-on-click="newService">Create a Service</button>
+                    </div>
+
+                    <div t-else="" class="row g-3">
+                        <!-- Left: what to price -->
+                        <div class="col-12 col-md-5 col-xl-4">
+                            <section class="o_ki_dash_card o_ki_pg_side p-3">
+                                <div class="input-group mb-2">
+                                    <span class="input-group-text"><i class="oi oi-search" aria-hidden="true"/></span>
+                                    <input type="text" class="form-control" placeholder="Find a garment..." aria-label="Find a garment"
+                                           t-att-value="state.search" t-on-input="onSearch"/>
+                                </div>
+                                <div t-if="state.categories.length" class="d-flex flex-wrap gap-1 mb-2">
+                                    <button type="button" class="btn btn-sm rounded-pill"
+                                            t-att-class="state.categoryId ? 'btn-light' : 'btn-primary'"
+                                            t-on-click="() => this.setCategory(false)">All</button>
+                                    <button t-foreach="state.categories" t-as="category" t-key="category.id" type="button"
+                                            class="btn btn-sm rounded-pill"
+                                            t-att-class="state.categoryId === category.id ? 'btn-primary' : 'btn-light'"
+                                            t-on-click="() => this.setCategory(category.id)" t-out="category.name"/>
+                                </div>
+
+                                <div class="list-group list-group-flush o_ki_pg_list">
+                                    <button t-if="state.kgServices.length" type="button"
+                                            class="list-group-item list-group-item-action o_ki_pg_entry"
+                                            t-att-class="{ active: state.selected === 'kg' }" t-on-click="() => this.select('kg')">
+                                        <span class="o_ki_pg_avatar bg-info-subtle text-info-emphasis"><i class="fa fa-balance-scale" aria-hidden="true"/></span>
+                                        <span class="flex-grow-1 text-start">Per kg services</span>
+                                        <span class="badge rounded-pill text-bg-light" t-out="state.kgServices.length"/>
+                                    </button>
+                                    <button t-if="state.addons.length" type="button"
+                                            class="list-group-item list-group-item-action o_ki_pg_entry"
+                                            t-att-class="{ active: state.selected === 'addons' }" t-on-click="() => this.select('addons')">
+                                        <span class="o_ki_pg_avatar bg-warning-subtle text-warning-emphasis"><i class="fa fa-plus" aria-hidden="true"/></span>
+                                        <span class="flex-grow-1 text-start">Add-ons</span>
+                                        <span class="badge rounded-pill text-bg-light" t-out="state.addons.length"/>
+                                    </button>
+                                    <div t-if="state.pieceServices.length" class="o_ki_pg_list_title">Garments</div>
+                                    <t t-if="state.pieceServices.length">
+                                        <button t-foreach="filteredGarments" t-as="g" t-key="g.id" type="button"
+                                                class="list-group-item list-group-item-action o_ki_pg_entry"
+                                                t-att-class="{ active: state.selected === 'g' + g.id }"
+                                                t-on-click="() => this.select('g' + g.id)">
+                                            <span class="o_ki_pg_avatar bg-primary-subtle text-primary-emphasis" t-out="initials(g.name)"/>
+                                            <span class="flex-grow-1 text-start min-w-0">
+                                                <span class="d-block text-truncate" t-out="g.name"/>
+                                                <span t-if="g.category" class="d-block small text-muted text-truncate" t-out="g.category"/>
+                                            </span>
+                                            <span class="badge rounded-pill" t-att-class="countClass(g)"
+                                                  t-att-title="offeredCount(g) + ' of ' + state.pieceServices.length + ' services offered'">
+                                                <t t-out="offeredCount(g)"/>/<t t-out="state.pieceServices.length"/>
+                                            </span>
+                                        </button>
+                                        <div t-if="!filteredGarments.length" class="text-muted small p-2">No garment found.</div>
+                                    </t>
+                                </div>
+
+                                <div t-if="state.pieceServices.length" class="input-group mt-2">
+                                    <input type="text" class="form-control" placeholder="New garment, e.g. Kurta"
+                                           aria-label="New garment name" t-model="state.newGarment" t-on-keydown="onNewGarmentKeydown"/>
+                                    <button type="button" class="btn btn-secondary" t-on-click="addGarment"
+                                            t-att-disabled="!state.newGarment.trim()">
+                                        <i class="fa fa-plus me-1" aria-hidden="true"/>Add
+                                    </button>
+                                </div>
+                            </section>
+                        </div>
+
+                        <!-- Right: prices -->
+                        <div class="col-12 col-md-7 col-xl-8">
+                            <section class="o_ki_dash_card p-3 p-lg-4">
+
+                                <!-- One garment -->
+                                <t t-if="garment">
+                                    <div class="d-flex align-items-center gap-3 mb-1">
+                                        <span class="o_ki_pg_avatar o_ki_pg_avatar_lg bg-primary-subtle text-primary-emphasis" t-out="initials(garment.name)"/>
+                                        <div class="flex-grow-1 min-w-0">
+                                            <h3 class="mb-0 text-truncate" t-out="garment.name"/>
+                                            <span t-if="garment.category" class="text-muted" t-out="garment.category"/>
+                                        </div>
+                                        <button type="button" class="btn btn-link" t-on-click="() => this.editGarment(garment)">
+                                            <i class="fa fa-pencil me-1" aria-hidden="true"/>Edit garment
+                                        </button>
+                                    </div>
+                                    <p class="text-muted mb-3">Switch on each service you offer for <t t-out="garment.name"/> and type its price.</p>
+                                    <div class="o_ki_pg_rows">
+                                        <div t-foreach="state.pieceServices" t-as="service" t-key="service.id" class="o_ki_pg_row"
+                                             t-att-class="{ 'o_ki_pg_row_off': priceOf(service, garment) === null }">
+                                            <div class="form-check form-switch m-0">
+                                                <input class="form-check-input" type="checkbox" role="switch"
+                                                       t-att-id="'ki_pg_' + service.id"
+                                                       t-att-checked="priceOf(service, garment) !== null"
+                                                       t-att-disabled="state.saving[key(service.id, garment.id)]"
+                                                       t-on-change="(ev) => this.toggleService(service, garment, ev)"/>
+                                            </div>
+                                            <label class="o_ki_pg_row_name" t-att-for="'ki_pg_' + service.id">
+                                                <span class="d-block fw-medium" t-out="service.name"/>
+                                                <span t-if="service.all_garments" class="d-block small text-muted">Same price for every garment</span>
+                                            </label>
+                                            <t t-call="ki_laundry_management_base.PriceInput">
+                                                <t t-set="value" t-value="priceOf(service, garment)"/>
+                                                <t t-set="disabled" t-value="priceOf(service, garment) === null"/>
+                                                <t t-set="label" t-value="garment.name + ' / ' + service.name"/>
+                                                <t t-set="unit" t-value="false"/>
+                                                <t t-set="priceKey" t-value="key(service.id, garment.id)"/>
+                                                <t t-set="priceRecord" t-value="service"/>
+                                                <t t-set="priceGarment" t-value="garment"/>
+                                            </t>
+                                        </div>
+                                    </div>
+                                </t>
+
+                                <!-- Per kg services / add-ons -->
+                                <t t-elif="state.selected === 'kg' or state.selected === 'addons'">
+                                    <t t-set="records" t-value="state.selected === 'kg' ? state.kgServices : state.addons"/>
+                                    <h3 class="mb-1">
+                                        <t t-if="state.selected === 'kg'">Per kg services</t>
+                                        <t t-else="">Add-ons</t>
+                                    </h3>
+                                    <p class="text-muted mb-3">
+                                        <t t-if="state.selected === 'kg'">Loads are weighed at the counter and charged by weight.</t>
+                                        <t t-else="">Extras added to any garment, such as starch or fragrance.</t>
+                                    </p>
+                                    <div class="o_ki_pg_rows">
+                                        <div t-foreach="records" t-as="record" t-key="record.id" class="o_ki_pg_row">
+                                            <span class="o_ki_pg_avatar bg-light text-muted"><i class="fa" t-att-class="state.selected === 'kg' ? 'fa-balance-scale' : 'fa-plus'" aria-hidden="true"/></span>
+                                            <a href="#" class="o_ki_pg_row_name fw-medium" t-on-click.prevent="() => this.openService(record.id)" t-out="record.name"/>
+                                            <t t-call="ki_laundry_management_base.PriceInput">
+                                                <t t-set="value" t-value="record.price"/>
+                                                <t t-set="disabled" t-value="false"/>
+                                                <t t-set="label" t-value="record.name"/>
+                                                <t t-set="unit" t-value="state.selected === 'kg' ? record.uom : false"/>
+                                                <t t-set="priceKey" t-value="key(record.id, false)"/>
+                                                <t t-set="priceRecord" t-value="record"/>
+                                                <t t-set="priceGarment" t-value="false"/>
+                                            </t>
+                                        </div>
+                                    </div>
+                                </t>
+
+                                <div t-else="" class="o_ki_dash_empty">
+                                    <i class="fa fa-hand-o-left" aria-hidden="true"/>
+                                    <span t-if="state.garments.length">Pick a garment on the left.</span>
+                                    <span t-else="">Add your first garment on the left (Shirt, Saree, Blanket...).</span>
+                                </div>
+                            </section>
+                            <p class="text-muted small mt-2 mb-0">
+                                <i class="fa fa-info-circle me-1" aria-hidden="true"/>
+                                Prices are saved as you type. They are sales prices before pricelist discounts and offers.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </Layout>
+        </div>
+    </t>
+
+</templates>

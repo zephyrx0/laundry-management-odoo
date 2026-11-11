@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    ============================================================================
+     Kalvyai | Laundry Management - Base
+     Copyright (c) 2026-Present Kalvyai (https://kalvyai.com)
+     License: OPL-1. See the LICENSE file.
+    ============================================================================
+-->
+<odoo>
+    <record id="product_template_form_view_laundry" model="ir.ui.view">
+        <field name="name">product.template.form.laundry</field>
+        <field name="model">product.template</field>
+        <field name="inherit_id" ref="product.product_template_form_view"/>
+        <field name="arch" type="xml">
+            <xpath expr="//notebook" position="inside">
+                <page string="Laundry" name="ki_laundry" groups="ki_laundry_management_base.group_laundry_manager">
+                    <group>
+                        <group string="Usage">
+                            <field name="ki_laundry_is_service"/>
+                            <field name="ki_laundry_is_addon" invisible="ki_laundry_is_service"/>
+                            <field name="ki_laundry_pricing_mode" invisible="not ki_laundry_is_service"/>
+                            <field name="ki_laundry_is_package" invisible="not ki_laundry_is_service"/>
+                            <field name="ki_laundry_min_qty" invisible="not ki_laundry_is_service"/>
+                            <field name="ki_laundry_sequence" invisible="not ki_laundry_is_service and not ki_laundry_is_addon"/>
+                        </group>
+                        <group string="Turnaround &amp; Urgency" invisible="not ki_laundry_is_service">
+                            <field name="ki_laundry_tat_hours"/>
+                            <field name="ki_laundry_urgent_tat_hours"/>
+                            <field name="ki_laundry_urgent_surcharge_type"/>
+                            <field name="ki_laundry_urgent_surcharge"/>
+                        </group>
+                    </group>
+                    <group string="Process Steps" invisible="not ki_laundry_is_service">
+                        <field name="ki_laundry_step_ids" widget="many2many_tags" nolabel="1" colspan="2"
+                               options="{'no_create': True}"/>
+                    </group>
+                    <div invisible="not ki_laundry_is_service or ki_laundry_pricing_mode != 'piece'" class="text-muted">
+                        <field name="ki_laundry_garment_count" class="oe_inline"/> garment(s) enabled as variants of this service.
+                        <button name="%(ki_laundry_management_base.action_laundry_price_grid)d" type="action"
+                                string="Set Prices" class="btn-link px-0 ms-1" icon="fa-th"/>
+                    </div>
+                </page>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="product_template_search_view_laundry" model="ir.ui.view">
+        <field name="name">product.template.search.laundry</field>
+        <field name="model">product.template</field>
+        <field name="inherit_id" ref="product.product_template_search_view"/>
+        <field name="arch" type="xml">
+            <xpath expr="//filter[@name='filter_to_sell']" position="after">
+                <filter string="Laundry Services" name="ki_laundry_services" domain="[('ki_laundry_is_service', '=', True)]"/>
+                <filter string="Laundry Add-ons" name="ki_laundry_addons" domain="[('ki_laundry_is_addon', '=', True)]"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="action_laundry_service" model="ir.actions.act_window">
+        <field name="name">Services</field>
+        <field name="res_model">product.template</field>
+        <field name="view_mode">kanban,list,form</field>
+        <field name="domain">[('ki_laundry_is_service', '=', True)]</field>
+        <field name="context">{'default_ki_laundry_is_service': True, 'default_type': 'service', 'default_sale_ok': True, 'default_purchase_ok': False}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Create a laundry service</p>
+            <p>Services (Wash, Dry Clean, Iron...) are products; garments are their variants.</p>
+        </field>
+    </record>
+
+    <record id="action_laundry_addon" model="ir.actions.act_window">
+        <field name="name">Add-ons</field>
+        <field name="res_model">product.template</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('ki_laundry_is_addon', '=', True)]</field>
+        <field name="context">{'default_ki_laundry_is_addon': True, 'default_type': 'service', 'default_sale_ok': True, 'default_purchase_ok': False}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Create a laundry add-on</p>
+            <p>Add-ons (Starch, Fragrance, Stain Treatment...) are extras added to a garment at intake.</p>
+        </field>
+    </record>
+</odoo>

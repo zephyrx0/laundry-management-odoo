@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    ============================================================================
+     Kalvyai | Laundry Management - Base
+     Copyright (c) 2026-Present Kalvyai (https://kalvyai.com)
+     License: OPL-1. See the LICENSE file.
+    ============================================================================
+-->
+<odoo>
+    <record id="res_config_settings_view_form_laundry" model="ir.ui.view">
+        <field name="name">res.config.settings.view.form.laundry</field>
+        <field name="model">res.config.settings</field>
+        <field name="priority" eval="60"/>
+        <field name="inherit_id" ref="base.res_config_settings_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//form" position="inside">
+                <app data-string="Laundry" string="Laundry" name="ki_laundry_management_base"
+                     groups="ki_laundry_management_base.group_laundry_manager">
+                    <block title="Operations" name="ki_laundry_operations">
+                        <setting id="ki_laundry_calendar" string="Working Hours"
+                                 help="Due dates outside working hours or on holidays move to the next working time.">
+                            <field name="ki_laundry_calendar_id"/>
+                        </setting>
+                        <setting id="ki_laundry_payment" string="Default Payment Policy"
+                                 help="How customers pay by default; can be changed on each order.">
+                            <field name="ki_laundry_payment_policy"/>
+                            <div class="content-group mt-2" invisible="ki_laundry_payment_policy != 'advance'">
+                                <label for="ki_laundry_advance_percent" class="o_light_label"/>
+                                <field name="ki_laundry_advance_percent" class="oe_inline"/> %
+                            </div>
+                        </setting>
+                        <setting id="ki_laundry_scan_delivery" help="Every tag must be scanned before garments are handed over.">
+                            <field name="ki_laundry_require_scan_on_delivery"/>
+                        </setting>
+                        <setting id="ki_laundry_receipt" string="Receipt Layout" help="How lines are printed on the 80 mm receipt.">
+                            <field name="ki_laundry_receipt_layout"/>
+                        </setting>
+                    </block>
+                    <block title="Unclaimed Orders" name="ki_laundry_unclaimed">
+                        <setting id="ki_laundry_reminders" string="Reminders"
+                                 help="Days after an order is ready to e-mail a reminder, e.g. 7,14,30.">
+                            <field name="ki_laundry_mail_reminder"/>
+                            <div class="content-group mt-2" invisible="not ki_laundry_mail_reminder">
+                                <field name="ki_laundry_reminder_days" placeholder="7,14,30"/>
+                            </div>
+                        </setting>
+                        <setting id="ki_laundry_storage" string="Storage Fee"
+                                 help="Charge a daily storage fee on ready orders not collected after some free days.">
+                            <field name="ki_laundry_storage_fee"/>
+                            <div class="content-group mt-2" invisible="not ki_laundry_storage_fee">
+                                <div class="row">
+                                    <label for="ki_laundry_storage_fee_after_days" string="Free days" class="col-lg-4 o_light_label"/>
+                                    <field name="ki_laundry_storage_fee_after_days" class="oe_inline"/>
+                                </div>
+                                <div class="row">
+                                    <label for="ki_laundry_storage_product_id" string="Fee product" class="col-lg-4 o_light_label"/>
+                                    <field name="ki_laundry_storage_product_id" class="oe_inline"/>
+                                </div>
+                            </div>
+                        </setting>
+                    </block>
+                    <block title="Notifications" name="ki_laundry_notifications">
+                        <setting id="ki_laundry_mail_received" help="Sent when garments are received, with the price and due date.">
+                            <field name="ki_laundry_mail_received"/>
+                        </setting>
+                        <setting id="ki_laundry_mail_ready" help="Sent once when the whole order is ready.">
+                            <field name="ki_laundry_mail_ready"/>
+                        </setting>
+                        <setting id="ki_laundry_mail_delivered" help="Sent when all garments are handed over.">
+                            <field name="ki_laundry_mail_delivered"/>
+                        </setting>
+                    </block>
+                    <block title="Products" name="ki_laundry_products">
+                        <setting id="ki_laundry_system_products" string="Charge Products"
+                                 help="Products used for surcharges and charges (taxes and income accounts).">
+                            <div class="content-group">
+                                <div class="row mt-2">
+                                    <label for="ki_laundry_urgent_product_id" class="col-lg-5 o_light_label"/>
+                                    <field name="ki_laundry_urgent_product_id" placeholder="Default"/>
+                                </div>
+                                <div class="row">
+                                    <label for="ki_laundry_advance_product_id" class="col-lg-5 o_light_label"/>
+                                    <field name="ki_laundry_advance_product_id" placeholder="Default"/>
+                                </div>
+                            </div>
+                        </setting>
+                    </block>
+                    <block title="Terms" name="ki_laundry_terms_block">
+                        <setting id="ki_laundry_terms" string="Receipt Terms"
+                                 help="Printed at the bottom of receipts and order documents.">
+                            <field name="ki_laundry_terms"/>
+                        </setting>
+                    </block>
+                </app>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="action_laundry_config_settings" model="ir.actions.act_window">
+        <field name="name">Settings</field>
+        <field name="res_model">res.config.settings</field>
+        <field name="view_mode">form</field>
+        <field name="context">{'module': 'ki_laundry_management_base', 'bin_size': False}</field>
+    </record>
+</odoo>

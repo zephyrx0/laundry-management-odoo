@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    ============================================================================
+     Kalvyai | Laundry Management - Base
+     Copyright (c) 2026-Present Kalvyai (https://kalvyai.com)
+     License: OPL-1. See the LICENSE file.
+    ============================================================================
+-->
+<templates xml:space="preserve">
+    <t t-name="ki_laundry_management_base.DashboardChart">
+        <div class="o_ki_dash_chart position-relative" t-attf-style="height: {{ props.height }}px;">
+            <canvas t-ref="canvas" role="img" t-att-aria-label="props.seriesLabel"/>
+        </div>
+    </t>
+</templates>

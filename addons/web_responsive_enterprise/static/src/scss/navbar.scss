@@ -1,0 +1,31 @@
+// ============================================================================
+//  Web Responsive Enterprise — top navbar
+// ----------------------------------------------------------------------------
+//  The purple background already comes from the brand variable override; here
+//  we add the Enterprise polish: subtle depth, smoother entries, crisp systray.
+// ============================================================================
+
+.o_web_client .o_main_navbar {
+    box-shadow: 0 1px 0 rgba(0, 0, 0, .12), 0 2px 6px rgba(0, 0, 0, .08);
+
+    // App brand text a touch bolder, like Enterprise.
+    .o_menu_brand {
+        font-weight: 600;
+        letter-spacing: .1px;
+    }
+
+    // Navbar entries: rounded hover pill instead of a flat block.
+    .o_nav_entry,
+    .o_menu_sections .dropdown-toggle,
+    .o_navbar_apps_menu > .dropdown button,
+    .o_menu_systray > div > button,
+    .o_menu_systray .dropdown-toggle {
+        border-radius: 6px;
+        transition: background-color var(--wre-transition, 160ms ease);
+    }
+
+    // Apps grid icon a little more prominent.
+    .o_navbar_apps_menu .oi-apps {
+        font-size: 1.15em;
+    }
+}

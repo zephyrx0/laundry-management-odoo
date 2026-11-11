@@ -1,0 +1,408 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    ============================================================================
+     Kalvyai | Laundry Management - Base
+     Copyright (c) 2026-Present Kalvyai (https://kalvyai.com)
+     License: OPL-1. See the LICENSE file.
+    ============================================================================
+-->
+<odoo>
+
+    <record id="view_laundry_order_list" model="ir.ui.view">
+        <field name="name">ki.laundry.order.list</field>
+        <field name="model">ki.laundry.order</field>
+        <field name="arch" type="xml">
+            <list decoration-danger="is_late" decoration-muted="state == 'cancelled'" sample="1">
+                <field name="name" decoration-bf="1"/>
+                <field name="date_order" optional="show"/>
+                <field name="partner_id"/>
+                <field name="partner_phone" optional="hide"/>
+                <field name="channel" optional="hide"/>
+                <field name="is_urgent" widget="boolean_toggle" readonly="1" optional="show"/>
+                <field name="date_due" widget="remaining_days" invisible="state in ('delivered', 'cancelled')" optional="show"/>
+                <field name="item_count" string="Tags" optional="show"/>
+                <field name="user_id" widget="many2one_avatar_user" optional="hide"/>
+                <field name="company_id" groups="base.group_multi_company" optional="hide"/>
+                <field name="currency_id" column_invisible="True"/>
+                <field name="is_late" column_invisible="True"/>
+                <field name="amount_total" sum="Total" decoration-bf="1"/>
+                <field name="invoice_status" optional="hide" widget="badge"
+                       decoration-info="invoice_status == 'to_invoice'" decoration-success="invoice_status == 'invoiced'"/>
+                <field name="state" widget="badge"
+                       decoration-info="state == 'received'"
+                       decoration-warning="state in ('in_process', 'partially_ready')"
+                       decoration-success="state in ('ready', 'delivered')"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_laundry_order_form" model="ir.ui.view">
+        <field name="name">ki.laundry.order.form</field>
+        <field name="model">ki.laundry.order</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="action_receive" type="object" string="Receive Garments" class="btn-primary"
+                            invisible="not garments_editable" groups="ki_laundry_management_base.group_laundry_user"
+                            help="Garments are at the store: prices are frozen and one tag is created per garment."/>
+                    <button name="action_open_deliver_wizard" type="object" string="Deliver" class="btn-primary"
+                            invisible="not can_deliver"/>
+                    <button name="action_open_invoice_wizard" type="object" string="Create Invoice"
+                            invisible="state in ('draft', 'cancelled') or invoice_status != 'to_invoice'"
+                            groups="ki_laundry_management_base.group_laundry_user"/>
+                    <button name="action_print_receipt" type="object" string="Print Receipt"
+                            invisible="state != 'received'"/>
+                    <button name="action_print_tags" type="object" string="Print Tags"
+                            invisible="item_count == 0 or state != 'received'"/>
+                    <button name="action_open_cancel_wizard" type="object" string="Cancel"
+                            invisible="not garments_editable" groups="ki_laundry_management_base.group_laundry_user"/>
+                    <button name="action_open_cancel_wizard" type="object" string="Stop &amp; Return"
+                            invisible="not in_custody or is_stopped"
+                            groups="ki_laundry_management_base.group_laundry_manager"/>
+                    <button name="action_draft" type="object" string="Reset to Draft"
+                            invisible="state != 'cancelled' or is_stopped" groups="ki_laundry_management_base.group_laundry_user"/>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,received,in_process,ready,delivered"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_view_items" type="object" class="oe_stat_button" icon="fa-tags"
+                                invisible="item_count == 0">
+                            <div class="o_stat_info">
+                                <span class="o_stat_value"><field name="item_ready_count"/> / <field name="item_count"/></span>
+                                <span class="o_stat_text">Items Ready</span>
+                            </div>
+                        </button>
+                        <button name="action_view_invoices" type="object" class="oe_stat_button" icon="fa-pencil-square-o"
+                                invisible="invoice_count == 0" groups="account.group_account_invoice">
+                            <field name="invoice_count" widget="statinfo" string="Invoices"/>
+                        </button>
+                    </div>
+                    <widget name="web_ribbon" title="Urgent" bg_color="text-bg-danger" invisible="not is_urgent or state in ('delivered', 'cancelled')"/>
+                    <widget name="web_ribbon" title="Stopped" bg_color="text-bg-warning" invisible="not is_stopped"/>
+                    <div class="oe_title">
+                        <h1><field name="name" readonly="1"/></h1>
+                    </div>
+                    <group>
+                        <group name="customer">
+                            <field name="partner_id" widget="res_partner_many2one" readonly="state != 'draft'"
+                                   context="{'show_vat': True}" placeholder="Customer name or phone"/>
+                            <field name="partner_phone" widget="phone"/>
+                            <field name="partner_email" widget="email"/>
+                            <field name="partner_invoice_id" groups="account.group_delivery_invoice_address"
+                                   readonly="state != 'draft'" context="{'default_type': 'invoice'}"/>
+                            <field name="payment_policy" readonly="state in ('delivered', 'cancelled')"/>
+                        </group>
+                        <group name="dates">
+                            <field name="date_order" readonly="state != 'draft'"/>
+                            <field name="date_due" readonly="state in ('delivered', 'cancelled')"
+                                   decoration-danger="is_late"/>
+                            <field name="is_urgent" readonly="not prices_editable"/>
+                            <field name="pricelist_id" groups="product.group_product_pricelist" readonly="state != 'draft'"
+                                   options="{'no_create': True}"/>
+                            <field name="user_id" widget="many2one_avatar_user"/>
+                            <field name="company_id" groups="base.group_multi_company" readonly="state != 'draft'"/>
+                            <field name="currency_id" invisible="1"/>
+                            <field name="is_late" invisible="1"/>
+                            <field name="is_stopped" invisible="1"/>
+                            <field name="garments_editable" invisible="1"/>
+                            <field name="prices_editable" invisible="1"/>
+                            <field name="in_custody" invisible="1"/>
+                            <field name="can_deliver" invisible="1"/>
+                            <field name="invoice_status" invisible="1"/>
+                            <field name="item_count" invisible="1"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Garments" name="intake">
+                            <field name="intake_ids" readonly="not garments_editable" context="{'default_order_id': id}">
+                                <list editable="bottom">
+                                    <field name="sequence" widget="handle"/>
+                                    <field name="pricing_mode"/>
+                                    <field name="garment_id" required="pricing_mode == 'piece'" readonly="pricing_mode == 'kg'"
+                                           options="{'no_create': True}"/>
+                                    <field name="quantity" invisible="pricing_mode != 'piece'"/>
+                                    <field name="weight_estimated" invisible="pricing_mode != 'kg'" optional="hide"/>
+                                    <field name="weight_actual" invisible="pricing_mode != 'kg'"/>
+                                    <field name="bag_count" invisible="pricing_mode != 'kg'" optional="show"/>
+                                    <field name="service_ids" widget="many2many_tags" options="{'no_create': True}"/>
+                                    <field name="addon_product_ids" widget="many2many_tags" options="{'no_create': True}" optional="show"/>
+                                    <field name="note" optional="show"/>
+                                    <field name="damage_note" optional="hide"/>
+                                    <field name="currency_id" column_invisible="True"/>
+                                    <field name="state" column_invisible="True"/>
+                                    <field name="amount_total" sum="Total"/>
+                                    <button name="action_open_split_wizard" type="object" icon="fa-scissors" title="Split / change services"
+                                            invisible="pricing_mode != 'piece' or state in ('draft', 'delivered', 'cancelled')"/>
+                                    <button name="action_open_weigh_wizard" type="object" icon="fa-balance-scale" title="Weigh"
+                                            invisible="pricing_mode != 'kg' or not parent.prices_editable"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Billing" name="billing">
+                            <field name="line_ids" readonly="not prices_editable"
+                                   context="{'default_order_id': id, 'default_line_type': 'other'}">
+                                <list editable="bottom" create="1" delete="1">
+                                    <field name="sequence" widget="handle"/>
+                                    <field name="line_type" readonly="1"/>
+                                    <field name="product_id" readonly="line_type != 'other'" options="{'no_create': True}"
+                                           domain="[('sale_ok', '=', True)]"/>
+                                    <field name="name" optional="show"/>
+                                    <field name="product_uom_qty" readonly="line_type != 'other'"/>
+                                    <field name="product_uom_id" optional="hide" readonly="1"/>
+                                    <field name="price_unit"/>
+                                    <field name="discount" optional="show"/>
+                                    <field name="tax_ids" widget="many2many_tags" optional="show"/>
+                                    <field name="qty_invoiced" optional="hide"/>
+                                    <field name="currency_id" column_invisible="True"/>
+                                    <field name="price_is_manual" column_invisible="True"/>
+                                    <field name="price_subtotal"/>
+                                    <field name="price_total" optional="hide"/>
+                                </list>
+                            </field>
+                            <group col="6" class="mt-2 mt-md-0">
+                                <group colspan="4">
+                                    <div colspan="2">
+                                        <button name="action_recompute_prices" type="object" string="Update Prices"
+                                                help="Recompute the prices of non-invoiced lines with the order's price date"
+                                                class="btn-link px-0" icon="fa-refresh"
+                                                invisible="not prices_editable"
+                                                groups="ki_laundry_management_base.group_laundry_manager"
+                                                confirm="Prices of non-invoiced lines will be recomputed with the order's price date. Continue?"/>
+                                    </div>
+                                </group>
+                                <group class="oe_subtotal_footer" colspan="2">
+                                    <field name="tax_totals" widget="account-tax-totals-field" nolabel="1" colspan="2" readonly="1"/>
+                                    <field name="amount_paid" invisible="not amount_paid"/>
+                                    <field name="amount_due" invisible="not amount_paid" class="fw-bold"/>
+                                </group>
+                            </group>
+                        </page>
+                        <page string="Items" name="items" invisible="item_count == 0">
+                            <field name="item_ids" readonly="1">
+                                <list decoration-success="state in ('ready', 'delivered')" decoration-danger="state in ('damaged', 'lost')"
+                                      decoration-warning="state == 'rework'">
+                                    <field name="barcode"/>
+                                    <field name="name"/>
+                                    <field name="description" optional="show"/>
+                                    <field name="current_step_id"/>
+                                    <field name="progress" widget="progressbar" optional="show"/>
+                                    <field name="rack_location" optional="show"/>
+                                    <field name="has_damage" optional="hide"/>
+                                    <field name="state" widget="badge"/>
+                                    <button name="action_complete_step" type="object" icon="fa-check" title="Complete current step"
+                                            invisible="state not in ('pending', 'in_process', 'rework')"/>
+                                    <button name="action_print_tag" type="object" icon="fa-print" title="Print tag"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Other Information" name="other">
+                            <group>
+                                <group string="Invoicing" name="invoicing">
+                                    <field name="fiscal_position_id" readonly="state != 'draft'" options="{'no_create': True}"/>
+                                    <field name="payment_term_id" options="{'no_create': True}"/>
+                                    <field name="invoice_status"/>
+                                    <field name="financial_path"/>
+                                    <field name="price_date"/>
+                                </group>
+                                <group string="Tracking" name="tracking">
+                                    <field name="channel"/>
+                                    <field name="origin"/>
+                                    <field name="barcode"/>
+                                    <field name="date_received"/>
+                                    <field name="date_ready"/>
+                                    <field name="date_delivered"/>
+                                    <field name="cancel_reason" invisible="not cancel_reason"/>
+                                </group>
+                            </group>
+                            <group>
+                                <field name="note" placeholder="Note printed on the receipt..."/>
+                                <field name="internal_note" placeholder="Internal note..."/>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_laundry_order_kanban" model="ir.ui.view">
+        <field name="name">ki.laundry.order.kanban</field>
+        <field name="model">ki.laundry.order</field>
+        <field name="arch" type="xml">
+            <kanban default_group_by="state" class="o_kanban_small_column" sample="1" quick_create="false"
+                    group_create="false" group_delete="false" group_edit="false" records_draggable="false">
+                <field name="currency_id"/>
+                <field name="is_urgent"/>
+                <field name="item_count"/>
+                <field name="state"/>
+                <progressbar field="activity_state"
+                             colors='{"planned": "success", "today": "warning", "overdue": "danger"}'/>
+                <templates>
+                    <t t-name="card">
+                        <div class="d-flex align-items-baseline mb-2">
+                            <field name="partner_id" class="fw-bolder fs-5 me-2"/>
+                            <field name="amount_total" widget="monetary" class="fw-bolder ms-auto flex-shrink-0"/>
+                        </div>
+                        <div class="d-flex flex-wrap gap-2 mb-1">
+                            <span t-if="record.is_urgent.raw_value" class="badge rounded-pill text-bg-danger">Urgent</span>
+                            <span t-if="record.item_count.raw_value" class="text-muted">
+                                <field name="item_ready_count"/> / <field name="item_count"/> ready
+                            </span>
+                        </div>
+                        <footer class="align-items-end">
+                            <div class="d-flex flex-wrap gap-1 text-muted text-nowrap">
+                                <field name="name"/>
+                                <field name="date_due" widget="remaining_days"
+                                       invisible="state in ('delivered', 'cancelled')"/>
+                                <field name="activity_ids" widget="kanban_activity"/>
+                            </div>
+                            <field name="user_id" widget="many2one_avatar_user" class="ms-auto"/>
+                        </footer>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <record id="view_laundry_order_activity" model="ir.ui.view">
+        <field name="name">ki.laundry.order.activity</field>
+        <field name="model">ki.laundry.order</field>
+        <field name="arch" type="xml">
+            <activity string="Laundry Orders">
+                <templates>
+                    <div t-name="activity-box">
+                        <div class="d-flex justify-content-between">
+                            <field name="name" class="fw-bold"/>
+                            <field name="amount_total" widget="monetary"/>
+                        </div>
+                        <field name="partner_id" muted="1"/>
+                        <field name="currency_id" invisible="1"/>
+                    </div>
+                </templates>
+            </activity>
+        </field>
+    </record>
+
+    <record id="view_laundry_order_calendar" model="ir.ui.view">
+        <field name="name">ki.laundry.order.calendar</field>
+        <field name="model">ki.laundry.order</field>
+        <field name="arch" type="xml">
+            <calendar date_start="date_due" color="state" mode="week" quick_create="0" event_open_popup="1">
+                <field name="partner_id"/>
+                <field name="amount_total"/>
+                <field name="state" filters="1"/>
+            </calendar>
+        </field>
+    </record>
+
+    <record id="view_laundry_order_pivot" model="ir.ui.view">
+        <field name="name">ki.laundry.order.pivot</field>
+        <field name="model">ki.laundry.order</field>
+        <field name="arch" type="xml">
+            <pivot sample="1">
+                <field name="date_order" type="row" interval="month"/>
+                <field name="state" type="col"/>
+                <field name="amount_total" type="measure"/>
+            </pivot>
+        </field>
+    </record>
+
+    <record id="view_laundry_order_graph" model="ir.ui.view">
+        <field name="name">ki.laundry.order.graph</field>
+        <field name="model">ki.laundry.order</field>
+        <field name="arch" type="xml">
+            <graph sample="1">
+                <field name="date_order" interval="week"/>
+                <field name="amount_total" type="measure"/>
+            </graph>
+        </field>
+    </record>
+
+    <record id="view_laundry_order_search" model="ir.ui.view">
+        <field name="name">ki.laundry.order.search</field>
+        <field name="model">ki.laundry.order</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name" string="Order" filter_domain="['|', ('name', 'ilike', self), ('barcode', '=', self)]"/>
+                <field name="partner_id" filter_domain="['|', '|', ('partner_id', 'child_of', raw_value), ('partner_id.phone', 'ilike', self), ('partner_id.email', 'ilike', self)]"/>
+                <field name="item_ids" string="Tag" filter_domain="[('item_ids.barcode', '=', self)]"/>
+                <field name="user_id"/>
+                <filter string="My Orders" name="my_orders" domain="[('user_id', '=', uid)]"/>
+                <separator/>
+                <filter string="Draft" name="draft" domain="[('state', '=', 'draft')]"/>
+                <filter string="In Process" name="in_process" domain="[('state', 'in', ('received', 'in_process', 'partially_ready'))]"/>
+                <filter string="Ready" name="ready" domain="[('state', '=', 'ready')]"/>
+                <filter string="Open" name="open" domain="[('state', 'not in', ('delivered', 'cancelled'))]"/>
+                <separator/>
+                <filter string="Urgent" name="urgent" domain="[('is_urgent', '=', True)]"/>
+                <filter string="Late" name="late" domain="[('is_late', '=', True)]"/>
+                <filter string="To Invoice" name="to_invoice" domain="[('invoice_status', '=', 'to_invoice')]"/>
+                <filter string="Unclaimed (7+ days)" name="unclaimed"
+                        domain="[('state', '=', 'ready'), ('date_ready', '&lt;', (context_today() - relativedelta(days=7)).strftime('%Y-%m-%d'))]"/>
+                <separator/>
+                <filter string="Order Date" name="filter_date_order" date="date_order"/>
+                <filter string="Due Date" name="filter_date_due" date="date_due"/>
+                <group>
+                    <filter string="Status" name="group_state" context="{'group_by': 'state'}"/>
+                    <filter string="Customer" name="group_partner" context="{'group_by': 'partner_id'}"/>
+                    <filter string="Channel" name="group_channel" context="{'group_by': 'channel'}"/>
+                    <filter string="Due Date" name="group_date_due" context="{'group_by': 'date_due:day'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_laundry_order" model="ir.actions.act_window">
+        <field name="name">Laundry Orders</field>
+        <field name="res_model">ki.laundry.order</field>
+        <field name="view_mode">list,kanban,form,calendar,pivot,graph,activity</field>
+        <field name="search_view_id" ref="view_laundry_order_search"/>
+        <field name="context">{'search_default_open': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Create a laundry order</p>
+            <p>Add the customer's garments, pick the services, and print the receipt and garment tags.</p>
+        </field>
+    </record>
+
+    <record id="action_laundry_order_in_process" model="ir.actions.act_window">
+        <field name="name">In Process</field>
+        <field name="res_model">ki.laundry.order</field>
+        <field name="view_mode">kanban,list,form,calendar</field>
+        <field name="search_view_id" ref="view_laundry_order_search"/>
+        <field name="context">{'search_default_in_process': 1}</field>
+    </record>
+
+    <record id="action_laundry_order_ready" model="ir.actions.act_window">
+        <field name="name">Ready to Collect</field>
+        <field name="res_model">ki.laundry.order</field>
+        <field name="view_mode">list,kanban,form</field>
+        <field name="search_view_id" ref="view_laundry_order_search"/>
+        <field name="context">{'search_default_ready': 1}</field>
+    </record>
+
+    <record id="action_laundry_order_analysis" model="ir.actions.act_window">
+        <field name="name">Orders Analysis</field>
+        <field name="res_model">ki.laundry.order</field>
+        <field name="view_mode">pivot,graph,list</field>
+        <field name="search_view_id" ref="view_laundry_order_search"/>
+    </record>
+
+    <record id="action_laundry_order_unclaimed" model="ir.actions.act_window">
+        <field name="name">Unclaimed Orders</field>
+        <field name="res_model">ki.laundry.order</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_laundry_order_search"/>
+        <field name="context">{'search_default_unclaimed': 1}</field>
+    </record>
+
+    <record id="action_server_laundry_create_invoices" model="ir.actions.server">
+        <field name="name">Create Invoices</field>
+        <field name="model_id" ref="model_ki_laundry_order"/>
+        <field name="binding_model_id" ref="model_ki_laundry_order"/>
+        <field name="binding_view_types">list</field>
+        <field name="group_ids" eval="[(4, ref('ki_laundry_management_base.group_laundry_user'))]"/>
+        <field name="state">code</field>
+        <field name="code">action = records.action_open_invoice_wizard()</field>
+    </record>
+</odoo>

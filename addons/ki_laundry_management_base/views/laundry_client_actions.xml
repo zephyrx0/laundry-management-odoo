@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    ============================================================================
+     Kalvyai | Laundry Management - Base
+     Copyright (c) 2026-Present Kalvyai (https://kalvyai.com)
+     License: OPL-1. See the LICENSE file.
+    ============================================================================
+-->
+<odoo>
+    <record id="action_laundry_dashboard" model="ir.actions.client">
+        <field name="name">Dashboard</field>
+        <field name="tag">ki_laundry_dashboard</field>
+    </record>
+
+    <record id="action_laundry_price_grid" model="ir.actions.client">
+        <field name="name">Prices</field>
+        <field name="tag">ki_laundry_price_grid</field>
+    </record>
+
+    <record id="action_laundry_workstation" model="ir.actions.client">
+        <field name="name">Workstation</field>
+        <field name="tag">ki_laundry_workstation</field>
+    </record>
+</odoo>

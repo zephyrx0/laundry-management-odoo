@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    ============================================================================
+     Kalvyai | Laundry Management - Base
+     Copyright (c) 2026-Present Kalvyai (https://kalvyai.com)
+     License: OPL-1. See the LICENSE file.
+    ============================================================================
+-->
+<odoo>
+    <record id="view_laundry_process_step_list" model="ir.ui.view">
+        <field name="name">ki.laundry.process.step.list</field>
+        <field name="model">ki.laundry.process.step</field>
+        <field name="arch" type="xml">
+            <list editable="bottom">
+                <field name="sequence" widget="handle"/>
+                <field name="name"/>
+                <field name="code"/>
+                <field name="step_type"/>
+                <field name="allow_skip"/>
+                <field name="company_id" groups="base.group_multi_company" optional="hide"/>
+                <field name="active" column_invisible="True"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_laundry_process_step_search" model="ir.ui.view">
+        <field name="name">ki.laundry.process.step.search</field>
+        <field name="model">ki.laundry.process.step</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <filter string="Archived" name="inactive" domain="[('active', '=', False)]"/>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_laundry_process_step" model="ir.actions.act_window">
+        <field name="name">Process Steps</field>
+        <field name="res_model">ki.laundry.process.step</field>
+        <field name="view_mode">list</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Create a process step</p>
+            <p>Steps are the stations a garment goes through (Wash, Iron, QC...). Their order is global, so
+                combined services are merged into a single route.</p>
+        </field>
+    </record>
+</odoo>

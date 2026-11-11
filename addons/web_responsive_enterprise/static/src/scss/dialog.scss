@@ -1,0 +1,23 @@
+// ============================================================================
+//  Web Responsive Enterprise — dialogs & notifications
+// ============================================================================
+
+.o_web_client {
+    // Modal: rounded corners, deeper shadow, blurred backdrop.
+    .modal-content {
+        border: 0;
+        border-radius: var(--wre-radius-lg);
+        box-shadow: var(--wre-shadow-lg);
+        overflow: hidden;
+    }
+
+    .modal-backdrop.show {
+        backdrop-filter: blur(2px);
+    }
+
+    // Toast / notification stack: card-like with accent left border.
+    .o_notification {
+        border-radius: var(--wre-radius);
+        box-shadow: var(--wre-shadow-md);
+    }
+}

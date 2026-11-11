@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    ============================================================================
+     Kalvyai | Laundry Management - Base
+     Copyright (c) 2026-Present Kalvyai (https://kalvyai.com)
+     License: OPL-1. See the LICENSE file.
+    ============================================================================
+-->
+<templates xml:space="preserve">
+
+    <t t-name="ki_laundry_management_base.WorkstationRoute">
+        <span class="o_ki_ws_route">
+            <t t-foreach="route" t-as="r" t-key="r_index">
+                <span class="o_ki_ws_route_step" t-att-class="routeClass(r)" t-att-title="r.step">
+                    <i t-if="r.state === 'done'" class="fa fa-check me-1" aria-hidden="true"/>
+                    <t t-out="r.step"/>
+                </span>
+            </t>
+        </span>
+    </t>
+
+    <t t-name="ki_laundry_management_base.Workstation">
+        <div t-att-class="props.className" class="o_ki_laundry_workstation">
+            <Layout display="display">
+                <t t-set-slot="layout-actions">
+                    <button type="button" class="btn btn-secondary" t-on-click="toggleHelp">
+                        <i class="fa fa-question-circle me-1" aria-hidden="true"/>How it works
+                    </button>
+                </t>
+                <div class="o_ki_ws container-fluid">
+
+                    <!-- How it works -->
+                    <div t-if="state.showHelp" class="o_ki_ws_help o_ki_dash_card p-3 mb-3">
+                        <div class="d-flex align-items-start">
+                            <div class="row g-3 flex-grow-1">
+                                <div class="col-12 col-md-6 col-xl-3 d-flex gap-2">
+                                    <span class="o_ki_ws_help_num">1</span>
+                                    <span><strong>Receive the order.</strong><br/>
+                                        <span class="text-muted">Each garment gets a tag with a barcode and its list of stations (e.g. Wash → Iron → Pack).</span></span>
+                                </div>
+                                <div class="col-12 col-md-6 col-xl-3 d-flex gap-2">
+                                    <span class="o_ki_ws_help_num">2</span>
+                                    <span><strong>Pick your station.</strong><br/>
+                                        <span class="text-muted">The list shows the garments waiting for you, urgent first.</span></span>
+                                </div>
+                                <div class="col-12 col-md-6 col-xl-3 d-flex gap-2">
+                                    <span class="o_ki_ws_help_num">3</span>
+                                    <span><strong>Scan the tag when done.</strong><br/>
+                                        <span class="text-muted">No scanner? Type the code, or tap Done in the list.</span></span>
+                                </div>
+                                <div class="col-12 col-md-6 col-xl-3 d-flex gap-2">
+                                    <span class="o_ki_ws_help_num">4</span>
+                                    <span><strong>It moves on by itself.</strong><br/>
+                                        <span class="text-muted">The garment goes to its next station. When all garments are done, the order is Ready and the customer is told.</span></span>
+                                </div>
+                            </div>
+                            <button type="button" class="btn-close ms-2" aria-label="Close" t-on-click="toggleHelp"/>
+                        </div>
+                    </div>
+
+                    <!-- Stations -->
+                    <div class="o_ki_ws_stations mb-3" role="tablist" aria-label="Stations">
+                        <button type="button" class="o_ki_ws_station" role="tab"
+                                t-att-class="{ active: !state.stepId }" t-att-aria-selected="!state.stepId"
+                                t-on-click="() => this.setStep(false)">
+                            <span class="o_ki_ws_station_name">All stations</span>
+                            <span class="o_ki_ws_station_count" t-out="state.total"/>
+                        </button>
+                        <button t-foreach="state.steps" t-as="station" t-key="station.id" type="button" class="o_ki_ws_station" role="tab"
+                                t-att-class="{ active: station.id === state.stepId }" t-att-aria-selected="station.id === state.stepId"
+                                t-on-click="() => this.setStep(station.id)">
+                            <span class="o_ki_ws_station_name" t-out="station.name"/>
+                            <span class="o_ki_ws_station_count" t-out="station.count"/>
+                        </button>
+                    </div>
+
+                    <div class="row g-3">
+                        <!-- Scan -->
+                        <div class="col-12 col-lg-5">
+                            <section class="o_ki_dash_card o_ki_ws_scan p-4 text-center"
+                                     t-att-class="{ 'o_ki_ws_success': state.last and state.last.success, 'o_ki_ws_error': state.last and !state.last.success }">
+                                <span class="o_ki_ws_scan_icon"><i class="fa fa-barcode" aria-hidden="true"/></span>
+                                <h4 class="mt-3 mb-1">Scan a garment tag</h4>
+                                <p class="text-muted mb-3">
+                                    Marks <strong t-out="stepName"/> done for the garment.
+                                    Scanning the order receipt does it for all its garments.
+                                </p>
+                                <input t-ref="manualInput" type="text" class="form-control form-control-lg text-center"
+                                       placeholder="Scan, or type the code and press Enter" aria-label="Barcode"
+                                       t-on-keydown="onManualKeydown"/>
+                                <div t-if="state.last" class="o_ki_ws_result mt-3 text-start"
+                                     t-att-class="state.last.success ? 'o_ki_ws_result_success' : 'o_ki_ws_result_error'">
+                                    <div class="fw-bold">
+                                        <i t-att-class="state.last.success ? 'fa fa-check-circle' : 'fa fa-exclamation-circle'" class="me-1" aria-hidden="true"/>
+                                        <t t-out="state.last.message"/>
+                                    </div>
+                                    <div t-foreach="state.last.items or []" t-as="item" t-key="item.id" class="mt-2">
+                                        <div>
+                                            <a href="#" class="fw-medium" t-on-click.prevent="() => this.openItem(item.id)" t-out="item.name"/>
+                                            <span class="text-muted"> · <t t-out="item.customer"/></span>
+                                        </div>
+                                        <div class="small">
+                                            <t t-if="item.state === 'ready'">Ready for collection</t>
+                                            <t t-elif="item.current_step">Next station: <strong t-out="item.current_step"/></t>
+                                        </div>
+                                        <t t-call="ki_laundry_management_base.WorkstationRoute">
+                                            <t t-set="route" t-value="item.route"/>
+                                        </t>
+                                    </div>
+                                </div>
+                            </section>
+
+                            <section t-if="state.history.length" class="o_ki_dash_card p-3 mt-3">
+                                <div class="o_ki_dash_card_header">
+                                    <h5>Recent scans</h5>
+                                </div>
+                                <div t-foreach="state.history" t-as="entry" t-key="entry.key" class="d-flex gap-2 small py-1">
+                                    <i t-att-class="entry.success ? 'fa fa-check text-success' : 'fa fa-times text-danger'" class="mt-1" aria-hidden="true"/>
+                                    <span class="text-muted text-nowrap" t-out="entry.time"/>
+                                    <span class="fw-medium text-nowrap" t-out="entry.barcode"/>
+                                    <span class="text-muted text-truncate" t-out="entry.message"/>
+                                </div>
+                            </section>
+                        </div>
+
+                        <!-- Queue -->
+                        <div class="col-12 col-lg-7">
+                            <section class="o_ki_dash_card p-3 h-100">
+                                <div class="o_ki_dash_card_header">
+                                    <h5>
+                                        <t t-if="step">Waiting at <t t-out="step.name"/></t>
+                                        <t t-else="">All garments in process</t>
+                                        <span class="badge rounded-pill text-bg-secondary ms-1" t-out="state.queueCount"/>
+                                    </h5>
+                                    <button type="button" class="btn btn-link btn-sm" t-on-click="load" title="Refresh">
+                                        <i class="fa fa-refresh" aria-hidden="true"/>
+                                    </button>
+                                </div>
+                                <div t-if="state.queue.length" class="list-group list-group-flush">
+                                    <div t-foreach="state.queue" t-as="item" t-key="item.id"
+                                         class="list-group-item d-flex align-items-center gap-3 px-1">
+                                        <div class="flex-grow-1 min-w-0">
+                                            <div class="d-flex flex-wrap align-items-center gap-2">
+                                                <a href="#" class="fw-bold" t-on-click.prevent="() => this.openItem(item.id)" t-out="item.name"/>
+                                                <span class="text-muted small" t-out="item.barcode"/>
+                                                <span t-if="item.is_urgent" class="badge rounded-pill text-bg-danger">Urgent</span>
+                                                <span t-if="item.has_damage" class="badge rounded-pill text-bg-warning">Damage noted</span>
+                                            </div>
+                                            <div class="small text-muted text-truncate">
+                                                <t t-out="item.customer"/> ·
+                                                <a href="#" t-on-click.prevent="() => this.openOrder(item.order_id)" t-out="item.order"/>
+                                                <t t-if="item.date_due"> · due
+                                                    <span t-att-class="{ 'text-danger fw-bold': isLate(item.date_due) }" t-out="formatDue(item.date_due)"/>
+                                                </t>
+                                            </div>
+                                            <div t-if="item.description" class="small fst-italic text-truncate" t-out="item.description"/>
+                                            <t t-call="ki_laundry_management_base.WorkstationRoute">
+                                                <t t-set="route" t-value="item.route"/>
+                                            </t>
+                                        </div>
+                                        <button type="button" class="btn btn-primary text-nowrap" t-att-disabled="state.busy"
+                                                t-on-click="() => this.scan(item.barcode)">
+                                            <i class="fa fa-check me-1" aria-hidden="true"/>
+                                            <t t-if="step">Done</t>
+                                            <t t-else="">Done: <t t-out="item.current_step"/></t>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div t-else="" class="o_ki_dash_empty">
+                                    <i class="fa fa-check-square-o" aria-hidden="true"/>
+                                    <span t-if="step">No garment waiting at this station.</span>
+                                    <span t-else="">No garment in process. Garments appear here once an order is received.</span>
+                                </div>
+                            </section>
+                        </div>
+                    </div>
+                </div>
+            </Layout>
+        </div>
+    </t>
+
+</templates>

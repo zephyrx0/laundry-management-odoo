@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    ============================================================================
+     Kalvyai | Laundry Management - Base
+     Copyright (c) 2026-Present Kalvyai (https://kalvyai.com)
+     License: OPL-1. See the LICENSE file.
+    ============================================================================
+-->
+<odoo>
+    <record id="action_report_laundry_order" model="ir.actions.report">
+        <field name="name">Laundry Order</field>
+        <field name="model">ki.laundry.order</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">ki_laundry_management_base.report_laundry_order</field>
+        <field name="report_file">ki_laundry_management_base.report_laundry_order</field>
+        <field name="print_report_name">'Laundry Order - %s' % (object.name)</field>
+        <field name="binding_model_id" ref="model_ki_laundry_order"/>
+        <field name="binding_type">report</field>
+    </record>
+
+    <record id="action_report_laundry_receipt" model="ir.actions.report">
+        <field name="name">Laundry Receipt</field>
+        <field name="model">ki.laundry.order</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">ki_laundry_management_base.report_laundry_receipt</field>
+        <field name="report_file">ki_laundry_management_base.report_laundry_receipt</field>
+        <field name="print_report_name">'Receipt - %s' % (object.name)</field>
+        <field name="paperformat_id" ref="paperformat_laundry_receipt"/>
+        <field name="binding_model_id" ref="model_ki_laundry_order"/>
+        <field name="binding_type">report</field>
+    </record>
+
+    <record id="action_report_laundry_tag" model="ir.actions.report">
+        <field name="name">Garment Tags</field>
+        <field name="model">ki.laundry.order.item</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">ki_laundry_management_base.report_laundry_tag</field>
+        <field name="report_file">ki_laundry_management_base.report_laundry_tag</field>
+        <field name="print_report_name">'Tags - %s' % (object.order_id.name)</field>
+        <field name="paperformat_id" ref="paperformat_laundry_tag"/>
+        <field name="binding_model_id" ref="model_ki_laundry_order_item"/>
+        <field name="binding_type">report</field>
+    </record>
+</odoo>

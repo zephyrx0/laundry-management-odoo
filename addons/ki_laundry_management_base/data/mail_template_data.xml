@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    ============================================================================
+     Kalvyai | Laundry Management - Base
+     Copyright (c) 2026-Present Kalvyai (https://kalvyai.com)
+     License: OPL-1. See the LICENSE file.
+    ============================================================================
+-->
+<odoo>
+    <data noupdate="1">
+
+        <record id="mail_template_laundry_received" model="mail.template">
+            <field name="name">Laundry: Garments Received</field>
+            <field name="model_id" ref="model_ki_laundry_order"/>
+            <field name="subject">{{ object.company_id.name }} - We received your garments ({{ object.name }})</field>
+            <field name="email_from">{{ (object.user_id.email_formatted or object.company_id.email_formatted or user.email_formatted) }}</field>
+            <field name="use_default_to" eval="True"/>
+            <field name="description">Sent when garments are counted / weighed at the store</field>
+            <field name="body_html" type="html">
+<div style="margin: 0px; padding: 0px; font-size: 13px;">
+    <p>Hello <t t-out="object.partner_id.name or ''">Customer</t>,</p>
+    <p>We received <strong t-out="object.item_count or 0">3</strong> item(s) for order <strong t-out="object.name or ''">LD/2026/00001</strong>.</p>
+    <p>Amount: <strong t-out="format_amount(object.amount_total, object.currency_id) or ''">$ 10.00</strong></p>
+    <p t-if="object.date_due">Expected ready: <strong t-out="format_datetime(object.date_due, tz=object.partner_id.tz or 'UTC', dt_format='short') or ''">01/01/2026</strong></p>
+    <p>Please keep your receipt; it is required to collect your garments.</p>
+    <p>Best regards,<br/><t t-out="object.company_id.name or ''">Company</t></p>
+</div>
+            </field>
+            <field name="lang">{{ object.partner_id.lang }}</field>
+            <field name="auto_delete" eval="True"/>
+        </record>
+
+        <record id="mail_template_laundry_ready" model="mail.template">
+            <field name="name">Laundry: Order Ready</field>
+            <field name="model_id" ref="model_ki_laundry_order"/>
+            <field name="subject">{{ object.company_id.name }} - Your laundry {{ object.name }} is ready</field>
+            <field name="email_from">{{ (object.user_id.email_formatted or object.company_id.email_formatted or user.email_formatted) }}</field>
+            <field name="use_default_to" eval="True"/>
+            <field name="description">Sent when every garment of the order is ready</field>
+            <field name="body_html" type="html">
+<div style="margin: 0px; padding: 0px; font-size: 13px;">
+    <p>Hello <t t-out="object.partner_id.name or ''">Customer</t>,</p>
+    <p>Good news: your laundry order <strong t-out="object.name or ''">LD/2026/00001</strong> is ready.</p>
+    <p>You can collect it at our store. Please bring your receipt.</p>
+    <p t-if="object.amount_due > 0">Amount due: <strong t-out="format_amount(object.amount_due, object.currency_id) or ''">$ 10.00</strong></p>
+    <p>Best regards,<br/><t t-out="object.company_id.name or ''">Company</t></p>
+</div>
+            </field>
+            <field name="lang">{{ object.partner_id.lang }}</field>
+            <field name="auto_delete" eval="True"/>
+        </record>
+
+        <record id="mail_template_laundry_delivered" model="mail.template">
+            <field name="name">Laundry: Order Delivered</field>
+            <field name="model_id" ref="model_ki_laundry_order"/>
+            <field name="subject">{{ object.company_id.name }} - Laundry {{ object.name }} delivered</field>
+            <field name="email_from">{{ (object.user_id.email_formatted or object.company_id.email_formatted or user.email_formatted) }}</field>
+            <field name="use_default_to" eval="True"/>
+            <field name="description">Sent when every garment has been delivered</field>
+            <field name="body_html" type="html">
+<div style="margin: 0px; padding: 0px; font-size: 13px;">
+    <p>Hello <t t-out="object.partner_id.name or ''">Customer</t>,</p>
+    <p>Your laundry order <strong t-out="object.name or ''">LD/2026/00001</strong> has been delivered. Thank you for your trust!</p>
+    <p>Best regards,<br/><t t-out="object.company_id.name or ''">Company</t></p>
+</div>
+            </field>
+            <field name="lang">{{ object.partner_id.lang }}</field>
+            <field name="auto_delete" eval="True"/>
+        </record>
+
+        <record id="mail_template_laundry_reminder" model="mail.template">
+            <field name="name">Laundry: Unclaimed Reminder</field>
+            <field name="model_id" ref="model_ki_laundry_order"/>
+            <field name="subject">{{ object.company_id.name }} - Reminder: your laundry {{ object.name }} is waiting</field>
+            <field name="email_from">{{ (object.user_id.email_formatted or object.company_id.email_formatted or user.email_formatted) }}</field>
+            <field name="use_default_to" eval="True"/>
+            <field name="description">Sent to customers who have not collected a ready order</field>
+            <field name="body_html" type="html">
+<div style="margin: 0px; padding: 0px; font-size: 13px;">
+    <p>Hello <t t-out="object.partner_id.name or ''">Customer</t>,</p>
+    <p>Your laundry order <strong t-out="object.name or ''">LD/2026/00001</strong> has been ready since
+        <t t-out="format_date(object.date_ready) or ''">01/01/2026</t>. Please collect it at your earliest convenience.</p>
+    <p t-if="object.company_id.ki_laundry_storage_fee_after_days">A storage fee applies after
+        <t t-out="object.company_id.ki_laundry_storage_fee_after_days or 0">30</t> days.</p>
+    <p>Best regards,<br/><t t-out="object.company_id.name or ''">Company</t></p>
+</div>
+            </field>
+            <field name="lang">{{ object.partner_id.lang }}</field>
+            <field name="auto_delete" eval="True"/>
+        </record>
+
+    </data>
+</odoo>

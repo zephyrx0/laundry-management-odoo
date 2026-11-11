@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    ============================================================================
+     Kalvyai | Laundry Management - Base
+     Copyright (c) 2026-Present Kalvyai (https://kalvyai.com)
+     License: OPL-1. See the LICENSE file.
+    ============================================================================
+-->
+<odoo>
+    <record id="view_laundry_garment_list" model="ir.ui.view">
+        <field name="name">ki.laundry.garment.list</field>
+        <field name="model">ki.laundry.garment</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="sequence" widget="handle"/>
+                <field name="name"/>
+                <field name="code"/>
+                <field name="category_id"/>
+                <field name="tag_mode"/>
+                <field name="parts_count"/>
+                <field name="service_count" string="Services"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_laundry_garment_form" model="ir.ui.view">
+        <field name="name">ki.laundry.garment.form</field>
+        <field name="model">ki.laundry.garment</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_open_price_grid" type="object" class="oe_stat_button" icon="fa-th"
+                                string="Set Prices" groups="ki_laundry_management_base.group_laundry_manager"/>
+                        <button name="action_open_services" type="object" class="oe_stat_button" icon="fa-tags">
+                            <field name="service_count" widget="statinfo" string="Services"/>
+                        </button>
+                    </div>
+                    <widget name="web_ribbon" title="Archived" bg_color="text-bg-danger" invisible="active"/>
+                    <field name="image_1920" widget="image" class="oe_avatar" options="{'preview_image': 'image_128'}"/>
+                    <div class="oe_title">
+                        <label for="name"/>
+                        <h1><field name="name" placeholder="e.g. Shirt"/></h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="code"/>
+                            <field name="category_id"/>
+                            <field name="active" invisible="1"/>
+                        </group>
+                        <group>
+                            <field name="tag_mode"/>
+                            <field name="parts_count"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_laundry_garment_kanban" model="ir.ui.view">
+        <field name="name">ki.laundry.garment.kanban</field>
+        <field name="model">ki.laundry.garment</field>
+        <field name="arch" type="xml">
+            <kanban>
+                <templates>
+                    <t t-name="card" class="flex-row">
+                        <aside class="o_kanban_aside_full">
+                            <field name="image_128" widget="image" options="{'img_class': 'object-fit-contain w-100 h-100'}"/>
+                        </aside>
+                        <main class="ms-2">
+                            <field name="name" class="fw-bold fs-5"/>
+                            <field name="category_id"/>
+                            <span><field name="service_count"/> services</span>
+                        </main>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <record id="view_laundry_garment_search" model="ir.ui.view">
+        <field name="name">ki.laundry.garment.search</field>
+        <field name="model">ki.laundry.garment</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="code"/>
+                <field name="category_id"/>
+                <filter string="Archived" name="inactive" domain="[('active', '=', False)]"/>
+                <filter string="Category" name="group_category" context="{'group_by': 'category_id'}"/>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_laundry_garment" model="ir.actions.act_window">
+        <field name="name">Garments</field>
+        <field name="res_model">ki.laundry.garment</field>
+        <field name="view_mode">kanban,list,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Create your first garment</p>
+            <p>Garments (Shirt, Saree, Blanket...) become variants of your laundry services.</p>
+        </field>
+    </record>
+
+    <record id="view_laundry_garment_category_list" model="ir.ui.view">
+        <field name="name">ki.laundry.garment.category.list</field>
+        <field name="model">ki.laundry.garment.category</field>
+        <field name="arch" type="xml">
+            <list editable="bottom">
+                <field name="sequence" widget="handle"/>
+                <field name="name"/>
+                <field name="garment_count"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_laundry_garment_category_search" model="ir.ui.view">
+        <field name="name">ki.laundry.garment.category.search</field>
+        <field name="model">ki.laundry.garment.category</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <filter string="Archived" name="inactive" domain="[('active', '=', False)]"/>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_laundry_garment_category" model="ir.actions.act_window">
+        <field name="name">Garment Categories</field>
+        <field name="res_model">ki.laundry.garment.category</field>
+        <field name="view_mode">list</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Create a garment category</p>
+            <p>Categories (Men, Women, Kids, Household...) group garments on the Prices screen and at the counter.</p>
+        </field>
+    </record>
+</odoo>

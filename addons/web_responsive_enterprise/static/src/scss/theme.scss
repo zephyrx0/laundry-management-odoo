@@ -1,0 +1,68 @@
+// ============================================================================
+//  Web Responsive Enterprise — design tokens & shared look
+// ----------------------------------------------------------------------------
+//  Exposes a small set of CSS custom properties ("design tokens", `--wre-*`)
+//  consumed by the other stylesheets and the app drawer, so colours, radii and
+//  shadows are defined in one place.
+// ============================================================================
+
+.o_web_client {
+    // --- Surfaces -----------------------------------------------------------
+    --wre-bg:            #f4f5f7;   // app background (soft gray)
+    --wre-surface:       #ffffff;   // cards / sheets
+    --wre-surface-2:     #fbfbfc;   // subtle raised surface
+    --wre-border:        #dee2e6;   // hairlines
+    --wre-text:          #1f2430;   // primary text
+    --wre-text-muted:    #6b7280;   // secondary text
+    --wre-accent:        #875a7b;   // enterprise accent
+    --wre-accent-contrast: #ffffff;
+
+    // --- Shape & depth ------------------------------------------------------
+    --wre-radius:        8px;
+    --wre-radius-sm:     6px;
+    --wre-radius-lg:     12px;
+    --wre-shadow-sm:     0 1px 2px rgba(16, 24, 40, .06),
+                         0 1px 3px rgba(16, 24, 40, .08);
+    --wre-shadow-md:     0 4px 12px rgba(16, 24, 40, .08),
+                         0 2px 4px rgba(16, 24, 40, .06);
+    --wre-shadow-lg:     0 12px 32px rgba(16, 24, 40, .16);
+
+    // --- Motion -------------------------------------------------------------
+    --wre-transition:    160ms cubic-bezier(.4, 0, .2, 1);
+}
+
+// Smoother type rendering, matching the Enterprise feel.
+.o_web_client {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+// App background.
+.o_web_client .o_action_manager {
+    background-color: var(--wre-bg);
+}
+
+// ---------------------------------------------------------------------------
+//  Buttons — slightly rounder with a soft hover lift (hardware accelerated).
+// ---------------------------------------------------------------------------
+.o_web_client {
+    .btn {
+        border-radius: var(--wre-radius-sm);
+        transition: background-color var(--wre-transition),
+                    border-color var(--wre-transition),
+                    box-shadow var(--wre-transition),
+                    transform var(--wre-transition);
+    }
+
+    .btn-primary {
+        box-shadow: var(--wre-shadow-sm);
+
+        &:hover:not(:disabled) {
+            transform: translateY(-1px);
+            box-shadow: var(--wre-shadow-md);
+        }
+        &:active:not(:disabled) {
+            transform: translateY(0);
+        }
+    }
+}

@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    ============================================================================
+     Kalvyai | Laundry Management - Base
+     Copyright (c) 2026-Present Kalvyai (https://kalvyai.com)
+     License: OPL-1. See the LICENSE file.
+    ============================================================================
+-->
+<odoo>
+    <record id="garment_category_men" model="ki.laundry.garment.category">
+        <field name="name">Men</field>
+        <field name="sequence">1</field>
+    </record>
+    <record id="garment_category_women" model="ki.laundry.garment.category">
+        <field name="name">Women</field>
+        <field name="sequence">2</field>
+    </record>
+    <record id="garment_category_household" model="ki.laundry.garment.category">
+        <field name="name">Household</field>
+        <field name="sequence">3</field>
+    </record>
+
+    <record id="garment_shirt" model="ki.laundry.garment">
+        <field name="name">Shirt</field>
+        <field name="code">SHT</field>
+        <field name="category_id" ref="garment_category_men"/>
+    </record>
+    <record id="garment_trouser" model="ki.laundry.garment">
+        <field name="name">Trouser</field>
+        <field name="code">TRS</field>
+        <field name="category_id" ref="garment_category_men"/>
+    </record>
+    <record id="garment_jeans" model="ki.laundry.garment">
+        <field name="name">Jeans</field>
+        <field name="code">JNS</field>
+        <field name="category_id" ref="garment_category_men"/>
+    </record>
+    <record id="garment_suit" model="ki.laundry.garment">
+        <field name="name">Suit (3 pieces)</field>
+        <field name="code">SUIT</field>
+        <field name="parts_count">3</field>
+        <field name="category_id" ref="garment_category_men"/>
+    </record>
+    <record id="garment_saree" model="ki.laundry.garment">
+        <field name="name">Saree</field>
+        <field name="code">SAR</field>
+        <field name="category_id" ref="garment_category_women"/>
+    </record>
+    <record id="garment_blanket" model="ki.laundry.garment">
+        <field name="name">Blanket</field>
+        <field name="code">BLK</field>
+        <field name="category_id" ref="garment_category_household"/>
+    </record>
+    <record id="garment_socks" model="ki.laundry.garment">
+        <field name="name">Socks (pair)</field>
+        <field name="code">SCK</field>
+        <field name="tag_mode">per_line</field>
+        <field name="category_id" ref="garment_category_men"/>
+    </record>
+
+    <record id="service_wash" model="product.template">
+        <field name="name">Wash</field>
+        <field name="type">service</field>
+        <field name="ki_laundry_is_service" eval="True"/>
+        <field name="ki_laundry_sequence">1</field>
+        <field name="ki_laundry_tat_hours">48</field>
+        <field name="ki_laundry_urgent_tat_hours">12</field>
+        <field name="categ_id" ref="product_category_laundry"/>
+        <field name="purchase_ok" eval="False"/>
+        <field name="ki_laundry_step_ids" eval="[(6, 0, [ref('step_inspect'), ref('step_wash'), ref('step_qc'), ref('step_pack')])]"/>
+    </record>
+    <record id="service_dry" model="product.template">
+        <field name="name">Dry</field>
+        <field name="type">service</field>
+        <field name="ki_laundry_is_service" eval="True"/>
+        <field name="ki_laundry_sequence">2</field>
+        <field name="ki_laundry_tat_hours">24</field>
+        <field name="ki_laundry_urgent_tat_hours">6</field>
+        <field name="categ_id" ref="product_category_laundry"/>
+        <field name="purchase_ok" eval="False"/>
+        <field name="ki_laundry_step_ids" eval="[(6, 0, [ref('step_dry'), ref('step_qc'), ref('step_pack')])]"/>
+    </record>
+    <record id="service_iron" model="product.template">
+        <field name="name">Iron</field>
+        <field name="type">service</field>
+        <field name="ki_laundry_is_service" eval="True"/>
+        <field name="ki_laundry_sequence">3</field>
+        <field name="ki_laundry_tat_hours">24</field>
+        <field name="ki_laundry_urgent_tat_hours">4</field>
+        <field name="list_price">15</field>
+        <field name="categ_id" ref="product_category_laundry"/>
+        <field name="purchase_ok" eval="False"/>
+        <field name="ki_laundry_step_ids" eval="[(6, 0, [ref('step_iron'), ref('step_qc'), ref('step_pack')])]"/>
+    </record>
+    <record id="service_dry_clean" model="product.template">
+        <field name="name">Dry Clean</field>
+        <field name="type">service</field>
+        <field name="ki_laundry_is_service" eval="True"/>
+        <field name="ki_laundry_sequence">4</field>
+        <field name="ki_laundry_tat_hours">72</field>
+        <field name="ki_laundry_urgent_tat_hours">24</field>
+        <field name="categ_id" ref="product_category_laundry"/>
+        <field name="purchase_ok" eval="False"/>
+        <field name="ki_laundry_step_ids" eval="[(6, 0, [ref('step_inspect'), ref('step_spot_clean'), ref('step_dry_clean'), ref('step_iron'), ref('step_qc'), ref('step_pack')])]"/>
+    </record>
+    <record id="service_wash_fold" model="product.template">
+        <field name="name">Wash &amp; Fold (kg)</field>
+        <field name="type">service</field>
+        <field name="ki_laundry_is_service" eval="True"/>
+        <field name="ki_laundry_pricing_mode">kg</field>
+        <field name="uom_id" ref="uom.product_uom_kgm"/>
+        <field name="list_price">80</field>
+        <field name="ki_laundry_min_qty">3</field>
+        <field name="ki_laundry_sequence">5</field>
+        <field name="ki_laundry_tat_hours">24</field>
+        <field name="ki_laundry_urgent_tat_hours">8</field>
+        <field name="categ_id" ref="product_category_laundry"/>
+        <field name="purchase_ok" eval="False"/>
+        <field name="ki_laundry_step_ids" eval="[(6, 0, [ref('step_wash'), ref('step_dry'), ref('step_fold'), ref('step_pack')])]"/>
+    </record>
+
+    <record id="addon_starch" model="product.template">
+        <field name="name">Starch</field>
+        <field name="type">service</field>
+        <field name="ki_laundry_is_addon" eval="True"/>
+        <field name="list_price">5</field>
+        <field name="categ_id" ref="product_category_laundry"/>
+        <field name="purchase_ok" eval="False"/>
+    </record>
+    <record id="addon_fragrance" model="product.template">
+        <field name="name">Fragrance</field>
+        <field name="type">service</field>
+        <field name="ki_laundry_is_addon" eval="True"/>
+        <field name="list_price">3</field>
+        <field name="categ_id" ref="product_category_laundry"/>
+        <field name="purchase_ok" eval="False"/>
+    </record>
+
+    <function model="ki.laundry.garment" name="_ki_demo_set_prices">
+        <value eval="[
+            (ref('service_wash'), ref('garment_shirt'), 30), (ref('service_wash'), ref('garment_trouser'), 35),
+            (ref('service_wash'), ref('garment_jeans'), 40), (ref('service_wash'), ref('garment_blanket'), 150),
+            (ref('service_wash'), ref('garment_socks'), 10),
+            (ref('service_dry'), ref('garment_shirt'), 10), (ref('service_dry'), ref('garment_trouser'), 10),
+            (ref('service_dry'), ref('garment_jeans'), 15), (ref('service_dry'), ref('garment_blanket'), 60),
+            (ref('service_dry'), ref('garment_socks'), 5),
+            (ref('service_dry_clean'), ref('garment_shirt'), 80), (ref('service_dry_clean'), ref('garment_trouser'), 90),
+            (ref('service_dry_clean'), ref('garment_suit'), 450), (ref('service_dry_clean'), ref('garment_saree'), 250),
+            (ref('service_dry_clean'), ref('garment_blanket'), 350),
+        ]"/>
+    </function>
+</odoo>

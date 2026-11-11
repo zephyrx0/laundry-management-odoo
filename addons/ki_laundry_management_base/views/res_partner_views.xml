@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    ============================================================================
+     Kalvyai | Laundry Management - Base
+     Copyright (c) 2026-Present Kalvyai (https://kalvyai.com)
+     License: OPL-1. See the LICENSE file.
+    ============================================================================
+-->
+<odoo>
+    <record id="view_partner_form_laundry" model="ir.ui.view">
+        <field name="name">res.partner.form.laundry</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//div[@name='button_box']" position="inside">
+                <button name="action_view_ki_laundry_orders" type="object" class="oe_stat_button" icon="fa-tint"
+                        groups="ki_laundry_management_base.group_laundry_worker"
+                        invisible="ki_laundry_order_count == 0">
+                    <field name="ki_laundry_order_count" widget="statinfo" string="Laundry"/>
+                </button>
+            </xpath>
+            <xpath expr="//notebook" position="inside">
+                <page string="Laundry" name="ki_laundry" groups="ki_laundry_management_base.group_laundry_worker">
+                    <group>
+                        <field name="ki_laundry_preference" placeholder="e.g. No starch, fold shirts, hang trousers"/>
+                    </group>
+                </page>
+            </xpath>
+        </field>
+    </record>
+</odoo>
